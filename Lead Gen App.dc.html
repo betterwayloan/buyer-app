@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="services.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-512.png">
+<meta name="theme-color" content="#2B2B2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+body{margin:0;background:#F3F1ED;font-family:'Barlow',system-ui,sans-serif;color:#2B2B2B;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+input,button,textarea{font-family:inherit}
+a{color:#2B2B2B}
+a:hover{color:#E8730C}
+@keyframes lgspin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column">
+
+  <!-- Top bar -->
+  <sc-if value="{{ v.notApp }}" hint-placeholder-val="{{ true }}">
+  <header style="background:{{ b.ink }};color:#fff;display:flex;align-items:center;gap:24px;padding:0 24px;min-height:60px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;gap:2px"><span style="width:6px;height:20px;background:{{ b.bar1 }}"></span><span style="width:6px;height:20px;background:{{ b.bar2 }}"></span><span style="width:6px;height:20px;background:{{ b.bar3 }}"></span></div>
+      <span style="font-weight:700;font-size:18px;letter-spacing:-0.01em">{{ b.name }}</span>
+      <span style="font-weight:400;font-size:18px;opacity:.8">{{ b.sub }}</span>
+    </div>
+    <nav style="display:flex;gap:4px;flex:1;flex-wrap:wrap">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.onClick }}" style="background:transparent;border:0;border-bottom:3px solid {{ t.bd }};color:#fff;opacity:{{ t.op }};font-size:15px;font-weight:600;padding:18px 12px 15px;cursor:pointer">{{ t.label }}</button>
+      </sc-for>
+    </nav>
+    <button onClick="{{ reset }}" style="background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer">Reset demo</button>
+  </header>
+  </sc-if>
+
+  <!-- ================= BUYER APP ================= -->
+  <sc-if value="{{ is.buyer }}" hint-placeholder-val="{{ true }}">
+  <main style="display:flex;gap:40px;padding:{{ v.mainPad }};justify-content:center;align-items:flex-start;flex-wrap:wrap">
+
+    <!-- Phone -->
+    <div style="width:{{ v.fw }};height:{{ v.fh }};border:{{ v.fb }};border-radius:{{ v.fr }};background:#fff;overflow:hidden;position:relative;flex-shrink:0;box-shadow:{{ v.fs }}">
+      <sc-if value="{{ v.notApp }}" hint-placeholder-val="{{ true }}"><div style="height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:14px;font-weight:600"><span>9:41</span><span style="width:90px;height:24px;background:#1B1B1B;border-radius:14px"></span><span>5G ▮▮▮</span></div></sc-if>
+      <div ref="{{ scrollRef }}" style="position:absolute;top:{{ v.top }};left:0;right:0;bottom:{{ v.bot }};overflow-y:auto;overflow-x:hidden">
+
+        <!-- shared sub-header -->
+        <sc-if value="{{ v.showHeader }}" hint-placeholder-val="{{ false }}">
+          <div style="position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #EEEBE6;padding:10px 16px;display:flex;align-items:center;gap:10px">
+            <sc-if value="{{ v.hasBack }}" hint-placeholder-val="{{ true }}"><button onClick="{{ back }}" style="width:36px;height:36px;border-radius:18px;border:1px solid #E2DED8;background:#fff;font-size:18px;cursor:pointer">‹</button></sc-if>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;color:#6B6B6B;font-weight:600;text-transform:uppercase;letter-spacing:.06em">{{ v.stageLabel }}</div>
+              <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ L.street }}</div>
+            </div>
+            <div style="display:flex;gap:2px"><span style="width:4px;height:14px;background:{{ b.bar1 }}"></span><span style="width:4px;height:14px;background:{{ b.bar2 }}"></span><span style="width:4px;height:14px;background:{{ b.bar3 }}"></span></div>
+          </div>
+          <sc-if value="{{ v.showProgress }}" hint-placeholder-val="{{ false }}">
+            <div style="height:4px;background:#EEEBE6"><div style="height:4px;width:{{ v.progress }};background:{{ b.accent }};transition:width .3s"></div></div>
+          </sc-if>
+        </sc-if>
+
+        <!-- LANDING -->
+        <sc-if value="{{ s.landing }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="display:flex;gap:2px"><span style="width:5px;height:18px;background:{{ b.bar1 }}"></span><span style="width:5px;height:18px;background:{{ b.bar2 }}"></span><span style="width:5px;height:18px;background:{{ b.bar3 }}"></span></div>
+              <span style="font-weight:700;font-size:16px">{{ b.name }}</span>
+            </div>
+            <span style="font-size:13px;color:#6B6B6B">{{ agent.agency }}</span>
+          </div>
+          <sc-if value="{{ p.hasKicker }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 16px 10px;padding:10px 12px;border-radius:10px;background:{{ b.tint }};font-size:14px;line-height:1.4"><strong>{{ agent.name }}, {{ agent.agency }}</strong><br>{{ p.kicker }}</div>
+          </sc-if>
+          <div style="position:relative;height:250px;background:#DCD7CF">
+            <img src="{{ v.photo }}" alt="" style="width:100%;height:250px;object-fit:cover;display:block">
+            <button onClick="{{ prevPhoto }}" style="position:absolute;left:0;top:0;bottom:0;width:40%;background:transparent;border:0;cursor:pointer" aria-label="Previous photo"></button>
+            <button onClick="{{ nextPhoto }}" style="position:absolute;right:0;top:0;bottom:0;width:40%;background:transparent;border:0;cursor:pointer" aria-label="Next photo"></button>
+            <span style="position:absolute;right:12px;bottom:12px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:600;padding:4px 9px;border-radius:12px">{{ v.photoCount }}</span>
+            <span style="position:absolute;left:12px;top:12px;background:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px">{{ L.openHome }}</span>
+          </div>
+          <div style="padding:18px 20px 8px">
+            <div style="font-size:24px;font-weight:700;line-height:1.15;letter-spacing:-0.01em">{{ L.street }}</div>
+            <div style="font-size:16px;color:#5B5B5B;margin-top:2px">{{ L.suburb }}</div>
+            <div style="display:flex;gap:14px;margin-top:12px;font-size:15px;font-weight:600"><span>{{ L.beds }} bed</span><span>{{ L.baths }} bath</span><span>{{ L.cars }} car</span><span style="color:#6B6B6B;font-weight:500">{{ L.type }}</span></div>
+            <div style="font-size:17px;font-weight:700;margin-top:10px">{{ L.guide }}</div>
+          </div>
+          <div style="margin:14px 16px;border:1px solid #E7E2DA;border-radius:16px;padding:18px;background:{{ b.tint }}">
+            <div style="font-size:18px;font-weight:700">{{ p.reportsTitle }}</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0 16px">
+              <sc-for list="{{ reportNames }}" as="r" hint-placeholder-count="5">
+                <div style="display:flex;gap:10px;align-items:center;font-size:15px"><span style="width:20px;height:20px;border-radius:10px;background:{{ b.ink }};color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center">✓</span>{{ r }}</div>
+              </sc-for>
+            </div>
+            <button onClick="{{ goMobile }}" style="width:100%;height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">{{ p.cta }}</button>
+            <div style="font-size:13px;color:#5B5B5B;text-align:center;margin-top:10px">No app to download. We text them to your phone.</div>
+          </div>
+          <div style="padding:6px 20px 28px;font-size:12px;color:#7A7A7A;line-height:1.5">Shared by {{ agent.name }}, {{ agent.agency }}. Finance options by {{ broker.name }}, {{ b.name }} {{ b.sub }}, ACL {{ broker.acl }}.</div>
+        </sc-if>
+
+        <!-- MOBILE -->
+        <sc-if value="{{ s.mobile }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 22px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:26px;font-weight:700;line-height:1.15">Where should we text your reports?</div>
+            <div style="font-size:15px;color:#5B5B5B">Your mobile number is all we need.</div>
+            <div style="display:flex;border:1.5px solid {{ b.ink }};border-radius:12px;height:56px;align-items:center;overflow:hidden">
+              <span style="padding:0 12px;font-size:17px;font-weight:600;border-right:1px solid #E2DED8;height:100%;display:flex;align-items:center">+61</span>
+              <input type="tel" inputmode="numeric" placeholder="0412 345 678" value="{{ f.mobile }}" onChange="{{ on.mobile }}" style="flex:1;border:0;outline:0;font-size:19px;padding:0 12px;height:100%;min-width:0">
+            </div>
+            <button onClick="{{ sendOtp }}" disabled="{{ v.mobileInvalid }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer;opacity:{{ v.mobileOp }}">Send code</button>
+            <div style="font-size:12px;color:#6B6B6B;line-height:1.5">By continuing you consent to {{ agent.agency }} and {{ b.name }} {{ b.sub }} contacting you about this property and your finance. We never sell your details.</div>
+          </div>
+        </sc-if>
+
+        <!-- OTP -->
+        <sc-if value="{{ s.otp }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 22px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:26px;font-weight:700;line-height:1.15">Enter the 4-digit code</div>
+            <div style="font-size:15px;color:#5B5B5B">Sent to {{ f.mobile }}</div>
+            <input type="tel" inputmode="numeric" maxlength="4" placeholder="• • • •" value="{{ f.otp }}" onChange="{{ on.otp }}" style="height:64px;border:1.5px solid {{ b.ink }};border-radius:12px;font-size:30px;letter-spacing:.5em;text-align:center;outline:0">
+            <div style="font-size:13px;color:#6B6B6B">Demo: enter any 4 digits, e.g. 1234</div>
+            <button onClick="{{ verifyOtp }}" disabled="{{ v.otpInvalid }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer;opacity:{{ v.otpOp }}">Verify &amp; get reports</button>
+          </div>
+        </sc-if>
+
+        <!-- REPORTS + FINANCE QUESTION -->
+        <sc-if value="{{ s.reports }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ v.showInstall }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:14px 16px 0;border-radius:14px;border:1px solid #E7E2DA;padding:12px;display:flex;gap:12px;align-items:center;background:#fff;box-shadow:0 6px 18px -10px rgba(0,0,0,.25)">
+              <img src="icon-512.png" alt="" style="width:44px;height:44px;border-radius:10px">
+              <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700">Add to your home screen</div><div style="font-size:12px;color:#5B5B5B;line-height:1.35">{{ v.installHint }}</div></div>
+              <button onClick="{{ install }}" style="height:36px;padding:0 14px;border-radius:18px;border:0;background:{{ b.accent }};color:#fff;font-weight:700;font-size:14px;cursor:pointer">Add</button>
+              <button onClick="{{ dismissInstall }}" aria-label="Dismiss" style="width:28px;height:28px;border:0;background:transparent;font-size:18px;color:#6B6B6B;cursor:pointer">×</button>
+            </div>
+          </sc-if>
+          <div style="padding:20px 18px 8px">
+            <div style="font-size:24px;font-weight:700;line-height:1.15">Your reports are ready</div>
+            <div style="font-size:14px;color:#5B5B5B;margin-top:4px">We've texted you a secure link so you can return any time.</div>
+          </div>
+          <div style="padding:8px 16px;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ reports }}" as="r" hint-placeholder-count="5">
+              <div style="display:flex;gap:12px;align-items:center;border:1px solid #E7E2DA;border-radius:14px;padding:12px">
+                <div style="width:40px;height:48px;border-radius:6px;background:{{ b.tint }};border:1px solid #E7E2DA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:{{ b.ink }};flex-shrink:0">PDF</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:15px;font-weight:700">{{ r.name }}</div>
+                  <div style="font-size:12px;color:#6B6B6B;line-height:1.35">{{ r.source }}</div>
+                </div>
+                <sc-if value="{{ r.ready }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ r.onView }}" style="height:36px;padding:0 14px;border-radius:18px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:14px;cursor:pointer">View</button>
+                </sc-if>
+                <sc-if value="{{ r.notReady }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:12px;font-weight:600;color:#6B6B6B;background:#F1EEE9;padding:6px 10px;border-radius:12px;white-space:nowrap">{{ r.status }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin:16px;border-radius:18px;background:{{ b.ink }};color:#fff;padding:20px">
+            <div style="font-size:20px;font-weight:700">Is your finance arranged?</div>
+            <div style="font-size:14px;opacity:.8;margin:4px 0 14px">One tap. It helps {{ agent.name }} know where you're at.</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ finOpts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="text-align:left;height:52px;border-radius:12px;border:1.5px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};font-size:16px;font-weight:600;padding:0 16px;cursor:pointer">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ v.finArranged }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px;font-size:14px;line-height:1.5;background:rgba(255,255,255,.1);border-radius:10px;padding:12px">Great, we've let {{ agent.name }} know you're pre-approved. Want to check you're on a sharp rate anyway? <a onClick="{{ goQuote }}" style="color:#fff;font-weight:700;text-decoration:underline;cursor:pointer">Compare in 30 sec</a></div>
+            </sc-if>
+          </div>
+          <div style="height:20px"></div>
+        </sc-if>
+
+        <!-- CREDIT GUIDE (must be given before any credit assistance) -->
+        <sc-if value="{{ s.credit_guide }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="font-size:24px;font-weight:700;line-height:1.15">Before we talk rates</div>
+              <div style="font-size:14px;color:#5B5B5B;margin-top:4px">We're required to give you our Credit Guide first. It's a 30-second read.</div>
+            </div>
+            <div style="border:1px solid #E7E2DA;border-radius:14px;padding:4px 14px">
+              <sc-for list="{{ cg }}" as="c" hint-placeholder-count="5">
+                <div style="padding:10px 0;border-bottom:1px solid #F1EEE9"><div style="font-size:14px;font-weight:700">{{ c.h }}</div><div style="font-size:13px;color:#4B4B4B;line-height:1.45;margin-top:2px">{{ c.t }}</div></div>
+              </sc-for>
+            </div>
+            <a onClick="{{ cgPdf }}" style="font-size:14px;font-weight:600;text-decoration:underline;cursor:pointer">Read the full Credit Guide &amp; Privacy Policy (PDF)</a>
+            <label style="display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer"><input type="checkbox" checked="{{ v.cgChecked }}" onChange="{{ cgToggle }}" style="width:22px;height:22px;margin:0;flex-shrink:0;accent-color:#2B2B2B">I have received the Credit Guide and agree to the collection of my information as described.</label>
+            <button onClick="{{ cgAccept }}" disabled="{{ v.cgMissing }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer;opacity:{{ v.cgOp }}">Continue to rates</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 1: QUOTE -->
+        <sc-if value="{{ s.quote }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:16px">
+            <div>
+              <div style="font-size:24px;font-weight:700;line-height:1.15">Get your indicative rate</div>
+              <div style="font-size:14px;color:#5B5B5B;margin-top:4px">No credit check. Takes about 30 seconds.</div>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Purchase price</span><input inputmode="numeric" value="{{ f.price }}" onChange="{{ on.price }}" style="height:50px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:17px"></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Deposit / savings available</span><input inputmode="numeric" placeholder="$" value="{{ f.deposit }}" onChange="{{ on.deposit }}" style="height:50px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:17px"></label>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Household income (gross, per year)</span><input inputmode="numeric" placeholder="$" value="{{ f.income }}" onChange="{{ on.income }}" style="height:50px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:17px"></label>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Buying to</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ ch.purpose }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="height:42px;padding:0 16px;border-radius:21px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:15px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+            </div>
+            <sc-if value="{{ v.hasLoan }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #E7E2DA;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;background:#FAF9F6">
+                <div style="font-size:15px;font-weight:700">Your current loan</div>
+                <input placeholder="Current lender" value="{{ f.curLender }}" onChange="{{ on.curLender }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px">
+                <input inputmode="decimal" placeholder="Current rate % p.a." value="{{ f.curRate }}" onChange="{{ on.curRate }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px">
+              </div>
+            </sc-if>
+            <div style="border-radius:14px;background:{{ b.tint }};padding:14px;display:flex;justify-content:space-between;font-size:15px">
+              <span>Loan <strong>{{ q.loanTxt }}</strong></span><span>LVR <strong>{{ q.lvrTxt }}</strong></span>
+            </div>
+            <button onClick="{{ showRates }}" disabled="{{ q.invalid }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer;opacity:{{ q.op }}">Show my rates</button>
+          </div>
+        </sc-if>
+
+        <!-- COMPARE -->
+        <sc-if value="{{ s.compare }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:18px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="border-radius:18px;background:{{ b.ink }};color:#fff;padding:20px">
+              <div style="font-size:13px;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Your indicative rate from</div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:44px;font-weight:700;letter-spacing:-0.02em">{{ q.bestRate }}</span><span style="font-size:15px;opacity:.85">p.a.</span></div>
+              <div style="font-size:14px;opacity:.85">Comparison rate {{ q.bestComp }} p.a. · {{ q.bestRepay }}/month</div>
+              <div style="font-size:14px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2)">Estimated borrowing power <strong>{{ q.power }}</strong></div>
+              <sc-if value="{{ q.hasSaving }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;background:{{ b.accent }};border-radius:10px;padding:10px 12px;font-size:15px;font-weight:600">Save about {{ q.saving }}/month vs your current {{ q.curRateTxt }}</div>
+              </sc-if>
+            </div>
+            <div style="font-size:13px;color:#6B6B6B;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:6px">Compare loans · {{ q.loanTxt }} over 30 yrs</div>
+            <sc-for list="{{ q.rows }}" as="p" hint-placeholder-count="4">
+              <button onClick="{{ p.onClick }}" style="text-align:left;border:2px solid {{ p.bd }};border-radius:14px;background:#fff;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <div><div style="font-size:16px;font-weight:700">{{ p.name }}</div><div style="font-size:13px;color:#6B6B6B">{{ p.lender }} · {{ p.type }}</div></div>
+                  <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:6px;background:{{ p.tagBg }};color:{{ p.tagFg }};white-space:nowrap">{{ p.tag }}</span>
+                </div>
+                <div style="display:flex;gap:16px;font-size:14px"><span><strong style="font-size:20px">{{ p.rateTxt }}</strong> p.a.</span><span style="color:#5B5B5B">Comp. {{ p.compTxt }}</span><span style="color:#5B5B5B;margin-left:auto">{{ p.repay }}/mo</span></div>
+                <div style="font-size:13px;color:#5B5B5B">{{ p.featTxt }}</div>
+              </button>
+            </sc-for>
+            <div style="border-radius:12px;background:#F6F4F0;padding:12px;font-size:12px;color:#4B4B4B;line-height:1.5"><strong>Not the whole market.</strong> We compare {{ q.count }} products from the lenders on {{ broker.firstName }}'s panel, sorted by rate. “White label” products are {{ b.name }}-branded and may pay us a different commission. {{ q.tmdNote }}</div>
+            <div style="font-size:11px;color:#7A7A7A;line-height:1.5">Sample rates for demonstration. Comparison rates are based on a $150,000 loan over 25 years. WARNING: This comparison rate is true only for the examples given and may not include all fees and charges. Indicative only, not an offer of credit. Credit provided by {{ b.name }} {{ b.sub }}, ACL {{ broker.acl }}.</div>
+            <button onClick="{{ goPA }}" style="height:56px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Get pre-approved: {{ q.selName }}</button>
+            <button onClick="{{ emailRates }}" style="height:48px;border:1.5px solid #D6D1C9;border-radius:12px;background:#fff;font-size:15px;font-weight:600;cursor:pointer">Just text me these rates</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2 INTRO -->
+        <sc-if value="{{ s.pa_intro }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:22px 20px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:26px;font-weight:700;line-height:1.15">Let's get you pre-approved</div>
+            <div style="border-radius:14px;background:{{ b.tint }};border:1px solid #EADFCF;padding:16px;font-size:15px;line-height:1.5"><strong>Accurate, complete details speed up your pre-approval.</strong> {{ broker.firstName }} checks everything against the lender's requirements, so mismatches with your documents cause delays.</div>
+            <div style="font-size:14px;font-weight:700;color:#5B5B5B">You'll need (about 5 minutes)</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ needList }}" as="n" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;align-items:center;font-size:15px"><span style="width:28px;height:28px;border-radius:14px;border:1.5px solid {{ b.ink }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">{{ n.n }}</span><span>{{ n.t }}</span></div>
+              </sc-for>
+            </div>
+            <div style="font-size:13px;color:#6B6B6B">We've filled in what we already know. Your progress saves as you go.</div>
+            <button onClick="{{ goID }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Start: photo of licence</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2: ID -->
+        <sc-if value="{{ s.pa_id }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:22px;font-weight:700">Photograph your driver's licence</div>
+            <div style="font-size:14px;color:#5B5B5B">We read the details for you. Just check them.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <sc-for list="{{ idTiles }}" as="d" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="height:110px;border:1.5px dashed {{ d.bd }};border-radius:12px;background:{{ d.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;overflow:hidden;position:relative">
+                    <input type="file" accept="image/*" capture="environment" onChange="{{ d.onFile }}" style="display:none">
+                    <sc-if value="{{ d.hasImg }}" hint-placeholder-val="{{ false }}"><img src="{{ d.url }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if>
+                    <span style="font-size:22px;position:relative">{{ d.icon }}</span>
+                    <span style="font-size:13px;font-weight:700;position:relative">{{ d.label }}</span>
+                    <span style="font-size:12px;color:#6B6B6B;position:relative">{{ d.hint }}</span>
+                  </label>
+                  <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ true }}"><a onClick="{{ d.onSample }}" style="font-size:12px;color:#6B6B6B;text-align:center;cursor:pointer;text-decoration:underline">Demo: use sample</a></sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ v.ocrBusy }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;font-weight:600;color:#5B5B5B">Reading your licence…</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Title</span>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ ch.title }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+            </div>
+            <sc-for list="{{ idFields }}" as="x" hint-placeholder-count="6">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ x.label }}</span><input value="{{ x.value }}" onChange="{{ x.onChange }}" placeholder="{{ x.ph }}" style="height:46px;border:1px solid {{ x.bd }};background:{{ x.bg }};border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-for>
+            <button onClick="{{ goYou }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">These details are correct</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2: ABOUT YOU -->
+        <sc-if value="{{ s.pa_you }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:22px;font-weight:700">About you</div>
+            <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Email</span><input type="email" value="{{ f.email }}" onChange="{{ on.email }}" placeholder="you@email.com" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Current address (from licence)</span><input value="{{ f.address }}" onChange="{{ on.address }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            <sc-for list="{{ youChips }}" as="g" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ g.label }}</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ g.opts }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ v.needPrevAddr }}" hint-placeholder-val="{{ false }}">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Previous address (lenders need 3 years)</span><input value="{{ f.prevAddress }}" onChange="{{ on.prevAddress }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-if>
+            <sc-if value="{{ v.isJoint }}" hint-placeholder-val="{{ false }}">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Their mobile. We'll text them their own secure link.</span><input type="tel" value="{{ f.partnerMobile }}" onChange="{{ on.partnerMobile }}" placeholder="04xx xxx xxx" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-if>
+            <button onClick="{{ goWork }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Continue</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2: WORK & INCOME -->
+        <sc-if value="{{ s.pa_work }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:22px;font-weight:700">Work &amp; income</div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Employment type</span>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ ch.emp }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+            </div>
+            <sc-for list="{{ workFields }}" as="x" hint-placeholder-count="3">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ x.label }}</span><input value="{{ x.value }}" onChange="{{ x.onChange }}" placeholder="{{ x.ph }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-for>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ v.timeLabel }}</span>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ ch.jobTime }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+            </div>
+            <sc-if value="{{ v.needPrevJob }}" hint-placeholder-val="{{ false }}">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Previous employer</span><input value="{{ f.prevEmployer }}" onChange="{{ on.prevEmployer }}" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-if>
+            <div style="border-top:1px solid #EEEBE6;padding-top:14px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:16px;font-weight:700">{{ v.docTitle }}</div>
+              <div style="font-size:13px;color:#5B5B5B">{{ v.docHint }}</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <sc-for list="{{ incomeTiles }}" as="d" hint-placeholder-count="2">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="height:92px;border:1.5px dashed {{ d.bd }};border-radius:12px;background:{{ d.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;text-align:center;padding:6px">
+                      <input type="file" accept="image/*,application/pdf" onChange="{{ d.onFile }}" style="display:none">
+                      <span style="font-size:20px">{{ d.icon }}</span>
+                      <span style="font-size:13px;font-weight:700">{{ d.label }}</span>
+                      <span style="font-size:11px;color:#6B6B6B">{{ d.hint }}</span>
+                    </label>
+                    <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ true }}"><a onClick="{{ d.onSample }}" style="font-size:12px;color:#6B6B6B;text-align:center;cursor:pointer;text-decoration:underline">Demo: use sample</a></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <button onClick="{{ goMoney }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Continue</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2: MONEY -->
+        <sc-if value="{{ s.pa_money }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:22px;font-weight:700">What you own &amp; owe</div>
+            <button onClick="{{ connectBank }}" style="text-align:left;border:2px solid {{ b.ink }};border-radius:14px;background:{{ b.tint }};padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:16px;font-weight:700">{{ v.bankLabel }}</span>
+              <span style="font-size:13px;color:#5B5B5B">Securely shares balances and debts via Open Banking (CDR). Read-only, and you can revoke it any time.</span>
+            </button>
+            <div style="font-size:13px;color:#6B6B6B;text-align:center">or enter totals</div>
+            <sc-for list="{{ moneyFields }}" as="x" hint-placeholder-count="4">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ x.label }}</span><input inputmode="numeric" value="{{ x.value }}" onChange="{{ x.onChange }}" placeholder="$" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-for>
+            <sc-for list="{{ moneyChips }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ g.label }}</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ g.opts }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ v.hasHecs }}" hint-placeholder-val="{{ false }}">
+              <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">HECS/HELP amount owing</span><input inputmode="numeric" value="{{ f.hecsAmt }}" onChange="{{ on.hecsAmt }}" placeholder="$" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
+            </sc-if>
+            <button onClick="{{ goReview }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Review</button>
+          </div>
+        </sc-if>
+
+        <!-- STAGE 2: REVIEW -->
+        <sc-if value="{{ s.pa_review }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:22px;font-weight:700">Check &amp; send to {{ broker.firstName }}</div>
+            <sc-for list="{{ review }}" as="r" hint-placeholder-count="4">
+              <div style="border:1px solid #E7E2DA;border-radius:14px;padding:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:700">{{ r.title }}</span><a onClick="{{ r.onEdit }}" style="font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline">Edit</a></div>
+                <div style="font-size:14px;color:#4B4B4B;margin-top:6px;line-height:1.5">{{ r.text }}</div>
+              </div>
+            </sc-for>
+            <sc-for list="{{ consents }}" as="c" hint-placeholder-count="3">
+              <label style="display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer"><input type="checkbox" checked="{{ c.checked }}" onChange="{{ c.onChange }}" style="width:22px;height:22px;margin:0;flex-shrink:0;accent-color:#2B2B2B">{{ c.text }}</label>
+            </sc-for>
+            <button onClick="{{ submitPA }}" disabled="{{ v.consentMissing }}" style="height:56px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer;opacity:{{ v.consentOp }}">Submit for pre-approval</button>
+          </div>
+        </sc-if>
+
+        <!-- DONE -->
+        <sc-if value="{{ s.pa_done }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px 20px;display:flex;flex-direction:column;gap:16px">
+            <div style="width:56px;height:56px;border-radius:28px;background:{{ b.accent }};color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center">✓</div>
+            <div style="font-size:26px;font-weight:700;line-height:1.15">Sent to {{ broker.name }}</div>
+            <div style="font-size:15px;color:#5B5B5B">{{ b.name }} {{ b.sub }} · {{ broker.office }}. {{ broker.firstName }} will be in touch within 1 business day.</div>
+            <sc-if value="{{ v.hasOffer }}" hint-placeholder-val="{{ false }}">
+              <div style="border-radius:16px;background:{{ b.ink }};color:#fff;padding:18px">
+                <div style="font-size:13px;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Offer from {{ broker.firstName }}</div>
+                <div style="font-size:20px;font-weight:700;margin-top:6px">{{ v.offer.productName }}</div>
+                <div style="font-size:34px;font-weight:700">{{ v.offer.rateTxt }} <span style="font-size:15px;font-weight:500">p.a.</span></div>
+                <div style="font-size:14px;opacity:.85;margin-top:6px;line-height:1.5">{{ v.offer.note }}</div>
+              </div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:0;border:1px solid #E7E2DA;border-radius:14px;padding:6px 14px">
+              <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+                <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #F1EEE9"><span style="width:12px;height:12px;border-radius:6px;background:{{ t.dot }}"></span><span style="font-size:15px;font-weight:{{ t.w }}">{{ t.label }}</span></div>
+              </sc-for>
+            </div>
+            <a href="{{ v.tel }}" style="height:52px;border-radius:12px;border:1.5px solid {{ b.ink }};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;text-decoration:none;color:{{ b.ink }}">Call {{ broker.firstName }} · {{ broker.phone }}</a>
+            <a onClick="{{ backToReports }}" style="font-size:14px;text-align:center;cursor:pointer;text-decoration:underline">Back to my reports</a>
+          </div>
+        </sc-if>
+
+        <!-- SENT RATES -->
+        <sc-if value="{{ s.sent }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 20px;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:26px;font-weight:700;line-height:1.15">Rates sent to your phone</div>
+            <div style="font-size:15px;color:#5B5B5B;line-height:1.5">Your link stays live. When you're ready, tap "Get pre-approved" from the text. Everything you've entered is saved.</div>
+            <button onClick="{{ goPA }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Get pre-approved now</button>
+            <a onClick="{{ backToReports }}" style="font-size:14px;text-align:center;cursor:pointer;text-decoration:underline">Back to my reports</a>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- APP BOTTOM NAV -->
+      <sc-if value="{{ v.showNav }}" hint-placeholder-val="{{ false }}">
+        <nav style="position:absolute;left:0;right:0;bottom:0;height:68px;background:#fff;border-top:1px solid #E7E2DA;display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:6px;z-index:15">
+          <sc-for list="{{ appNav }}" as="n" hint-placeholder-count="3">
+            <button onClick="{{ n.onClick }}" style="border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:{{ n.fg }}">
+              <span style="width:28px;height:4px;border-radius:2px;background:{{ n.bar }}"></span>
+              <span style="font-size:13px;font-weight:700">{{ n.label }}</span>
+              <span style="font-size:11px;color:#6B6B6B">{{ n.sub }}</span>
+            </button>
+          </sc-for>
+        </nav>
+      </sc-if>
+
+      <!-- REPORT VIEWER overlay -->
+      <sc-if value="{{ v.reportOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:{{ v.top }};left:0;right:0;bottom:0;background:#fff;z-index:20;overflow-y:auto">
+          <div style="position:sticky;top:0;background:{{ b.ink }};color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px">
+            <div style="flex:1"><div style="font-size:16px;font-weight:700">{{ rv.name }}</div><div style="font-size:12px;opacity:.75">{{ rv.source }}</div></div>
+            <button onClick="{{ closeReport }}" style="height:34px;padding:0 14px;border-radius:17px;border:0;background:#fff;color:{{ b.ink }};font-weight:700;cursor:pointer">Close</button>
+          </div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:10px;align-items:center">
+              <img src="{{ v.cover }}" alt="" style="width:72px;height:56px;object-fit:cover;border-radius:8px;background:#DCD7CF">
+              <div><div style="font-size:15px;font-weight:700">{{ L.street }}</div><div style="font-size:13px;color:#6B6B6B">{{ L.suburb }}</div></div>
+            </div>
+            <sc-if value="{{ rv.isCore }}" hint-placeholder-val="{{ true }}">
+              <div style="border-radius:14px;background:{{ b.tint }};padding:14px">
+                <div style="font-size:12px;font-weight:700;color:#6B6B6B;text-transform:uppercase;letter-spacing:.06em">Estimated value range</div>
+                <div style="font-size:24px;font-weight:700;margin-top:2px">{{ L.core.est }}</div>
+                <div style="font-size:13px;color:#5B5B5B">Confidence: {{ L.core.conf }}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <sc-for list="{{ L.core.facts }}" as="k" hint-placeholder-count="4">
+                  <div style="border:1px solid #E7E2DA;border-radius:10px;padding:10px"><div style="font-size:12px;color:#6B6B6B">{{ k.k }}</div><div style="font-size:15px;font-weight:700">{{ k.v }}</div></div>
+                </sc-for>
+              </div>
+              <div style="font-size:15px;font-weight:700">Sales history</div>
+              <sc-for list="{{ L.core.history }}" as="h" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;font-size:14px;border-bottom:1px solid #F1EEE9;padding-bottom:6px"><span>{{ h.d }}</span><strong>{{ h.p }}</strong></div>
+              </sc-for>
+              <div style="font-size:15px;font-weight:700">Comparable sales</div>
+              <sc-for list="{{ L.core.comps }}" as="c" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;gap:8px;font-size:14px;border-bottom:1px solid #F1EEE9;padding-bottom:6px"><span>{{ c.a }}<br><span style="color:#6B6B6B;font-size:12px">{{ c.m }}</span></span><strong>{{ c.p }}</strong></div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ rv.isDoc }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #E7E2DA;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;background:#FAF9F6">
+                <div style="font-size:14px;font-weight:700">{{ rv.summary }}</div>
+                <div style="height:8px;background:#E7E2DA;border-radius:4px;width:92%"></div><div style="height:8px;background:#E7E2DA;border-radius:4px;width:78%"></div><div style="height:8px;background:#E7E2DA;border-radius:4px;width:85%"></div><div style="height:8px;background:#E7E2DA;border-radius:4px;width:60%"></div>
+              </div>
+              <div style="font-size:13px;color:#6B6B6B">{{ rv.meta }}</div>
+            </sc-if>
+            <button style="height:48px;border-radius:12px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:15px;cursor:pointer">Download PDF</button>
+            <div style="font-size:11px;color:#7A7A7A;line-height:1.5">{{ v.dataModeBadge }} Reports are provided for information only. Seek independent advice.</div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- Demo controls + backstage -->
+    <sc-if value="{{ v.notApp }}" hint-placeholder-val="{{ true }}">
+    <aside style="width:420px;max-width:100%;display:flex;flex-direction:column;gap:16px">
+      <div style="background:#fff;border-radius:16px;padding:18px;border:1px solid #E7E2DA;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">Version · who's sharing</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ versionPick }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onClick }}" style="height:36px;padding:0 12px;border-radius:18px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B;margin-top:4px">How the buyer arrived</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ ch.source }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:36px;padding:0 12px;border-radius:18px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B;margin-top:4px">Listing (synced from {{ v.crmName }})</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ listingPick }}" as="l" hint-placeholder-count="3">
+            <button onClick="{{ l.onClick }}" style="display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid {{ l.bd }};background:#fff;border-radius:12px;padding:6px;cursor:pointer">
+              <img src="{{ l.img }}" alt="" style="width:52px;height:40px;object-fit:cover;border-radius:6px;background:#DCD7CF">
+              <span style="font-size:14px;font-weight:600">{{ l.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;border-top:1px solid #EEEBE6;padding-top:12px">
+          <img src="{{ v.qr }}" alt="QR code" style="width:84px;height:84px">
+          <div style="font-size:13px;color:#5B5B5B;line-height:1.45">Scan to open this listing's buyer link on your own phone. Printed automatically on the open-home sign-in card.</div>
+        </div>
+      </div>
+      <sc-if value="{{ v.showLog }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#1B1B1B;color:#E8E6E1;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;max-height:520px;overflow:auto">
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9A968F">Behind the scenes · integration calls</div>
+          <sc-if value="{{ v.logEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#9A968F">Tap through the buyer app. Each SMS, CRM, CoreLogic and document call appears here (stubbed in services.js).</div></sc-if>
+          <sc-for list="{{ log }}" as="l" hint-placeholder-count="0">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;border-top:1px solid #2E2E2E;padding-top:6px"><span style="color:#9A968F">{{ l.t }}</span> <span style="color:{{ b.bar1 }}">{{ l.svc }}</span><br>{{ l.msg }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="background:#fff;border-radius:16px;padding:16px;border:1px solid #E7E2DA;display:flex;gap:12px;align-items:center">
+        <div style="flex:1;font-size:13px;color:#5B5B5B;line-height:1.45"><strong style="color:#2B2B2B">Open as the real app.</strong> Full-screen buyer view as it runs on a phone. Installable to the home screen.</div>
+        <a href="?app=buyer" target="_blank" style="height:38px;padding:0 14px;border-radius:10px;border:1.5px solid #2B2B2B;display:flex;align-items:center;font-weight:700;font-size:14px;text-decoration:none">Open app ↗</a>
+      </div>
+    </aside>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <!-- ================= AGENT DASHBOARD ================= -->
+  <sc-if value="{{ is.agent }}" hint-placeholder-val="{{ false }}">
+  <main style="padding:28px 24px 48px;max-width:1240px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.01em">{{ agent.agency }}</div><div style="font-size:15px;color:#5B5B5B">{{ agent.name }} · {{ p.propsSub }} {{ v.crmName }}</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ syncCrm }}" style="height:42px;padding:0 16px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:14px;cursor:pointer">Sync {{ v.crmName }} now</button>
+        <button onClick="{{ simCheckin }}" style="height:42px;padding:0 16px;border-radius:10px;border:0;background:{{ b.accent }};color:#fff;font-weight:700;font-size:14px;cursor:pointer">{{ p.simBtn }}</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:14px;padding:16px"><div style="font-size:13px;color:#6B6B6B;font-weight:600">{{ k.label }}</div><div style="font-size:30px;font-weight:700">{{ k.value }}</div></div>
+      </sc-for>
+    </div>
+    <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+        <div><div style="font-size:18px;font-weight:700">Reports arrive automatically</div><div style="font-size:14px;color:#5B5B5B">No uploading. {{ v.crmName }} and CoreLogic RP Data push everything in by API.</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onClick="{{ simNewListing }}" style="height:38px;padding:0 14px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:13px;cursor:pointer">Simulate: new listing in {{ v.crmName }}</button>
+          <button onClick="{{ simDocUpload }}" style="height:38px;padding:0 14px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:13px;cursor:pointer">Simulate: building report added in {{ v.crmName }}</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+        <sc-for list="{{ pipeline }}" as="st" hint-placeholder-count="4">
+          <div style="border-radius:12px;background:#FAF9F6;border:1px solid #EEEBE6;padding:12px;display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;gap:8px;align-items:center"><span style="width:24px;height:24px;border-radius:12px;background:{{ b.ink }};color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ st.n }}</span><span style="font-size:14px;font-weight:700">{{ st.t }}</span></div>
+            <div style="font-size:13px;color:#5B5B5B;line-height:1.4">{{ st.d }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8A857D">{{ st.api }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:18px;font-weight:700">{{ p.propsLabel }}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px">
+      <sc-for list="{{ listingCards }}" as="l" hint-placeholder-count="3">
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+          <img src="{{ l.img }}" alt="" style="width:100%;height:150px;object-fit:cover;background:#DCD7CF">
+          <div style="padding:14px;display:flex;gap:12px">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:16px;font-weight:700">{{ l.street }}</div>
+              <div style="font-size:13px;color:#6B6B6B">{{ l.suburb }}</div>
+              <div style="font-size:13px;color:#5B5B5B">{{ l.openHome }}</div>
+              <div style="font-size:13px;font-weight:600;margin-top:4px">{{ l.leads }} buyers · {{ l.syncedAt }}</div>
+              <div style="display:flex;flex-direction:column;gap:3px;margin-top:6px">
+                <sc-for list="{{ l.auto }}" as="a" hint-placeholder-count="5">
+                  <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px"><span>{{ a.name }}</span><span style="font-weight:700;color:{{ a.col }};white-space:nowrap">{{ a.status }}</span></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+                <button onClick="{{ l.onOpen }}" style="height:32px;padding:0 10px;border-radius:8px;border:1.5px solid {{ b.ink }};background:#fff;font-size:13px;font-weight:700;cursor:pointer">Preview buyer app</button>
+                <button onClick="{{ l.onCopy }}" style="height:32px;padding:0 10px;border-radius:8px;border:1px solid #D6D1C9;background:#fff;font-size:13px;font-weight:600;cursor:pointer">Copy link</button>
+              </div>
+            </div>
+            <img src="{{ l.qr }}" alt="QR" style="width:88px;height:88px;flex-shrink:0">
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:18px;font-weight:700">Buyer leads</div>
+    <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;overflow:auto">
+      <div style="min-width:820px">
+        <div style="display:grid;grid-template-columns:1.3fr 1.4fr 1.4fr 1fr 1.2fr .8fr;gap:12px;padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B;border-bottom:1px solid #EEEBE6"><span>Buyer</span><span>Property</span><span>Came from</span><span>Finance</span><span>Stage</span><span>When</span></div>
+        <sc-for list="{{ leadRows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:1.3fr 1.4fr 1.4fr 1fr 1.2fr .8fr;gap:12px;padding:12px 16px;font-size:14px;border-bottom:1px solid #F1EEE9;align-items:center;background:{{ r.bg }}">
+            <span><strong>{{ r.name }}</strong><br><span style="color:#6B6B6B;font-size:13px">{{ r.mobile }}</span></span>
+            <span>{{ r.street }}</span>
+            <span style="color:#5B5B5B">{{ r.source }}</span>
+            <span>{{ r.finance }}</span>
+            <span><span style="font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;background:{{ r.stageBg }};color:{{ r.stageFg }}">{{ r.stage }}</span></span>
+            <span style="color:#6B6B6B;font-size:13px">{{ r.time }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#6B6B6B">Every lead is written back to {{ v.crmName }} as a contact and activity on the listing, so agents keep working in their own system.</div>
+  </main>
+  </sc-if>
+
+  <!-- ================= BROKER PORTAL ================= -->
+  <sc-if value="{{ is.broker }}" hint-placeholder-val="{{ false }}">
+  <main style="padding:28px 24px 48px;max-width:1280px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px">
+    <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.01em">Broker portal</div><div style="font-size:15px;color:#5B5B5B">{{ broker.name }} · {{ b.name }} {{ b.sub }} {{ broker.office }} · ACL {{ broker.acl }}</div></div>
+    <div style="display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:18px;align-items:start">
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;overflow:hidden">
+        <div style="padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B;border-bottom:1px solid #EEEBE6">Finance requests</div>
+        <sc-for list="{{ brokerList }}" as="r" hint-placeholder-count="3">
+          <button onClick="{{ r.onClick }}" style="display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;padding:12px 16px;border:0;border-bottom:1px solid #F1EEE9;border-left:4px solid {{ r.bd }};background:{{ r.bg }};cursor:pointer">
+            <span style="font-size:15px;font-weight:700">{{ r.name }}</span>
+            <span style="font-size:13px;color:#5B5B5B">{{ r.street }}</span>
+            <span style="font-size:12px;font-weight:700;color:{{ r.stageFg }}">{{ r.stage }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+            <div><div style="font-size:22px;font-weight:700">{{ bl.name }}</div><div style="font-size:14px;color:#5B5B5B">{{ bl.mobile }} · {{ bl.street }} · via {{ bl.source }}</div></div>
+            <button onClick="{{ exportForm }}" style="height:40px;padding:0 14px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:14px;cursor:pointer">Download pre-filled customer information form</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px">
+            <sc-for list="{{ bl.facts }}" as="k" hint-placeholder-count="6">
+              <div style="border:1px solid #EEEBE6;border-radius:10px;padding:10px;background:#FAF9F6"><div style="font-size:12px;color:#6B6B6B">{{ k.k }}</div><div style="font-size:15px;font-weight:700">{{ k.v }}</div></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ bl.docs }}" as="d" hint-placeholder-count="3">
+              <span style="font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;background:{{ b.tint }};border:1px solid #EADFCF">{{ d }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><div style="font-size:18px;font-weight:700">Best interests &amp; suitability record</div><span style="font-size:12px;font-weight:700;color:{{ bid.statusCol }}">{{ bid.status }}</span></div>
+          <div style="font-size:14px;color:#5B5B5B">Required before an offer can be sent. Saved to the client file for 7 years.</div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Client's requirements &amp; objectives</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bid.reqs }}" as="c" hint-placeholder-count="6"><button onClick="{{ c.onClick }}" style="height:34px;padding:0 12px;border-radius:17px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+            <sc-for list="{{ bid.svc }}" as="k" hint-placeholder-count="5">
+              <div style="border:1px solid #EEEBE6;border-radius:10px;padding:10px;background:{{ k.bg }}"><div style="font-size:12px;color:#6B6B6B">{{ k.k }}</div><div style="font-size:16px;font-weight:700;color:{{ k.col }}">{{ k.v }}</div></div>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:#6B6B6B">Preliminary assessment, indicative only. The lender's serviceability calculator is final. Products considered: {{ bid.considered }}.</div>
+          <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Why this product suits the client</span><input value="{{ bid.reason }}" onChange="{{ bid.onReason }}" placeholder="e.g. Lowest rate on panel with offset; client wants to reduce interest using savings" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px"></label>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;cursor:pointer"><input type="checkbox" checked="{{ bid.signed }}" onChange="{{ bid.onSign }}" style="width:20px;height:20px;margin:0;flex-shrink:0;accent-color:#2B2B2B">I've assessed this credit as not unsuitable and recommend it in the client's best interests.</label>
+        </div>
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:18px;font-weight:700">Enter offer for buyer</div>
+          <div style="font-size:14px;color:#5B5B5B">Buyer chose <strong>{{ bl.product }}</strong> at indicative {{ bl.rateTxt }}. Pick the product and set the rate. It's texted to the buyer with a secure link.</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ offerPick }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+          <div style="display:grid;grid-template-columns:160px minmax(0,1fr);gap:10px">
+            <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Rate % p.a.</span><input inputmode="decimal" value="{{ offer.rate }}" onChange="{{ onOfferRate }}" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:16px"></label>
+            <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Note to buyer</span><input value="{{ offer.note }}" onChange="{{ onOfferNote }}" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:16px"></label>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button onClick="{{ sendOffer }}" disabled="{{ bid.blocked }}" style="height:46px;padding:0 18px;border-radius:10px;border:0;background:{{ b.accent }};color:#fff;font-weight:700;font-size:15px;cursor:pointer;opacity:{{ bid.op }}">Send offer to buyer</button>
+            <span style="font-size:14px;color:#5B5B5B">{{ bl.offerTxt }}</span>
+          </div>
+        </div>
+        <div style="background:{{ b.ink }};color:#fff;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:18px;font-weight:700">How your rates reach buyers</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">
+            <sc-for list="{{ rateSteps }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;gap:10px;align-items:flex-start"><span style="width:26px;height:26px;border-radius:13px;background:{{ b.accent }};font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ r.n }}</span><div><div style="font-size:14px;font-weight:700">{{ r.t }}</div><div style="font-size:13px;opacity:.8;line-height:1.4">{{ r.d }}</div></div></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;overflow:auto">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-size:18px;font-weight:700">Products in the comparison</div><button onClick="{{ addProduct }}" style="height:38px;padding:0 14px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:14px;cursor:pointer">+ Add white-label product</button></div>
+          <div style="min-width:720px;display:flex;flex-direction:column">
+            <div style="display:grid;grid-template-columns:1.6fr 1.4fr 1fr .8fr .8fr .8fr;gap:10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B;padding:6px 0;border-bottom:1px solid #EEEBE6"><span>Product</span><span>Lender</span><span>Type</span><span>Rate %</span><span>Comp. %</span><span>Show</span></div>
+            <sc-for list="{{ productRows }}" as="p" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.6fr 1.4fr 1fr .8fr .8fr .8fr;gap:10px;padding:8px 0;border-bottom:1px solid #F1EEE9;align-items:center">
+                <input value="{{ p.name }}" onChange="{{ p.onName }}" style="height:38px;border:1px solid #E2DED8;border-radius:8px;padding:0 10px;font-size:14px;font-weight:600;min-width:0">
+                <input value="{{ p.lender }}" onChange="{{ p.onLender }}" style="height:38px;border:1px solid #E2DED8;border-radius:8px;padding:0 10px;font-size:14px;min-width:0">
+                <input value="{{ p.type }}" onChange="{{ p.onType }}" style="height:38px;border:1px solid #E2DED8;border-radius:8px;padding:0 10px;font-size:14px;min-width:0">
+                <input value="{{ p.base }}" onChange="{{ p.onBase }}" style="height:38px;border:1px solid #E2DED8;border-radius:8px;padding:0 10px;font-size:14px;min-width:0">
+                <input value="{{ p.comp }}" onChange="{{ p.onComp }}" style="height:38px;border:1px solid #E2DED8;border-radius:8px;padding:0 10px;font-size:14px;min-width:0">
+                <button onClick="{{ p.onToggle }}" style="height:32px;border-radius:16px;border:1.5px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};font-size:12px;font-weight:700;cursor:pointer">{{ p.showTxt }}</button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:13px;color:#6B6B6B">Lender panel products can also sync from the Open Banking product data feed. White-label and broker-only products are entered here and go live in the buyer app straight away.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= COMPLIANCE ================= -->
+  <sc-if value="{{ is.compliance }}" hint-placeholder-val="{{ false }}">
+  <main style="padding:28px 24px 48px;max-width:1240px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-end">
+      <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.01em">Compliance centre</div><div style="font-size:15px;color:#5B5B5B">Recorded automatically for {{ b.name }} {{ b.sub }} (ACL {{ broker.acl }}) and every referring partner.</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ exportAudit }}" style="height:42px;padding:0 16px;border-radius:10px;border:1.5px solid {{ b.ink }};background:#fff;font-weight:700;font-size:14px;cursor:pointer">Export audit trail (CSV)</button>
+        <button onClick="{{ deleteRequest }}" style="height:42px;padding:0 16px;border-radius:10px;border:1.5px solid #B3261E;color:#B3261E;background:#fff;font-weight:700;font-size:14px;cursor:pointer">Process privacy deletion (demo buyer)</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;align-items:start">
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">Disclosures in use</div>
+        <sc-for list="{{ disclosures }}" as="d" hint-placeholder-count="8">
+          <div style="display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #F1EEE9;padding:6px 0">
+            <div><div style="font-size:14px;font-weight:700">{{ d.name }}</div><div style="font-size:12px;color:#5B5B5B">{{ d.where }}</div></div>
+            <span style="font-size:12px;font-weight:700;color:#2E7D4F;white-space:nowrap">{{ d.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;overflow:auto">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">Consent register</div>
+        <div style="min-width:480px">
+          <div style="display:grid;grid-template-columns:1.4fr repeat(5,1fr);gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;color:#6B6B6B;padding:6px 0;border-bottom:1px solid #EEEBE6"><span>Buyer</span><span>SMS</span><span>Credit Guide</span><span>Privacy</span><span>Credit check</span><span>Declaration</span></div>
+          <sc-for list="{{ consentRows }}" as="r" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1.4fr repeat(5,1fr);gap:6px;font-size:13px;padding:8px 0;border-bottom:1px solid #F1EEE9;align-items:center"><strong>{{ r.name }}</strong><span style="color:{{ r.c1 }}">{{ r.sms }}</span><span style="color:{{ r.c2 }}">{{ r.cg }}</span><span style="color:{{ r.c3 }}">{{ r.privacy }}</span><span style="color:{{ r.c4 }}">{{ r.credit }}</span><span style="color:{{ r.c5 }}">{{ r.decl }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">Audit trail</div>
+      <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:150px 170px 220px minmax(0,1fr);gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid #F1EEE9"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#6B6B6B">{{ a.t }}</span><strong>{{ a.lead }}</strong><span>{{ a.event }}</span><span style="color:#5B5B5B">{{ a.detail }}</span></div>
+      </sc-for>
+    </div>
+    <div style="font-size:13px;color:#6B6B6B;line-height:1.5">Records kept 7 years. ID and income documents are encrypted and visible to the licensee only. Partners see contact and stage, never financials. Disclosure wording is a draft template for review by a credit and privacy lawyer before go-live.</div>
+  </main>
+  </sc-if>
+
+  <!-- ================= SETUP ================= -->
+  <sc-if value="{{ is.setup }}" hint-placeholder-val="{{ false }}">
+  <main style="padding:28px 24px 48px;max-width:1240px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+    <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.01em">Setup &amp; branding</div><div style="font-size:15px;color:#5B5B5B">One-time setup. After this, every listing creates its own buyer link and QR automatically.</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;align-items:start">
+
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">1 · Brand</div>
+        <div style="display:flex;gap:8px"><input value="{{ site }}" onChange="{{ onSite }}" placeholder="Paste your website, e.g. ljhooker.com.au" style="flex:1;height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px;min-width:0"><button onClick="{{ fetchBrand }}" style="height:44px;padding:0 14px;border-radius:10px;border:0;background:{{ b.ink }};color:#fff;font-weight:700;cursor:pointer">Auto-brand</button></div>
+        <div style="font-size:13px;font-weight:600;color:#5B5B5B">Or pick a preset</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ presetPick }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Brand name</span><input value="{{ b.name }}" onChange="{{ onBrand.name }}" style="height:42px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px;min-width:0"></label>
+          <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">Sub-brand</span><input value="{{ b.sub }}" onChange="{{ onBrand.sub }}" style="height:42px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px;min-width:0"></label>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+          <sc-for list="{{ colorPick }}" as="c" hint-placeholder-count="5">
+            <label style="display:flex;flex-direction:column;gap:4px;align-items:center;font-size:12px;font-weight:600;color:#5B5B5B"><input type="color" value="{{ c.value }}" onChange="{{ c.onChange }}" style="width:48px;height:40px;border:1px solid #D6D1C9;border-radius:8px;padding:2px;background:#fff;cursor:pointer">{{ c.label }}</label>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">2 · Who's sharing &amp; who receives finance leads</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ ch.partnerType }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:38px;padding:0 13px;border-radius:19px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <sc-for list="{{ peopleFields }}" as="x" hint-placeholder-count="6">
+            <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">{{ x.label }}</span><input value="{{ x.value }}" onChange="{{ x.onChange }}" style="height:42px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px;min-width:0"></label>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">3 · {{ p.intHead }}</div>
+        <input value="{{ v.intSearch }}" onChange="{{ onIntSearch }}" placeholder="Search your platform…" style="height:42px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <sc-for list="{{ intTiles }}" as="c" hint-placeholder-count="8">
+            <div style="display:flex;flex-direction:column;gap:6px;border:1px solid {{ c.tileBd }};border-radius:10px;padding:10px">
+              <div style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start"><span style="font-size:14px;font-weight:700;line-height:1.2">{{ c.name }}</span><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:{{ c.typeCol }};white-space:nowrap">{{ c.typeLabel }}</span></div>
+              <span style="font-size:11px;color:#6B6B6B">{{ c.kind }}</span>
+              <button onClick="{{ c.onClick }}" style="height:30px;border-radius:15px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:12px;font-weight:700;cursor:pointer">{{ c.label }}</button>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13px;color:#6B6B6B;line-height:1.5">{{ p.intNote }} Connection types are planned and need confirming with each vendor.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">4 · Report sources</div>
+        <div style="font-size:13px;font-weight:600;color:#5B5B5B">Property data (CoreLogic RP Data)</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ dataModes }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="height:36px;padding:0 12px;border-radius:18px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+        <div style="font-size:13px;color:#4B4B4B;line-height:1.45;background:#FAF9F6;border-radius:10px;padding:10px">{{ v.dataModeDesc }}</div>
+        <sc-for list="{{ sources }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #F1EEE9;padding-bottom:8px">
+            <div><div style="font-size:15px;font-weight:700">{{ r.name }}</div><div style="font-size:13px;color:#5B5B5B;line-height:1.4">{{ r.how }}</div></div>
+            <span style="font-size:12px;font-weight:700;color:#2E7D4F;white-space:nowrap">{{ r.status }}</span>
+          </div>
+        </sc-for>
+        <div style="font-size:13px;color:#6B6B6B">Free to buyers. Reports are cached per address, so later buyers get them instantly.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E7E2DA;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6B6B6B">5 · Send to a client (accountants &amp; conveyancers)</div>
+        <div style="font-size:14px;color:#5B5B5B">Two fields. The client gets a branded link with the reports and finance check.</div>
+        <input type="tel" value="{{ share.mobile }}" onChange="{{ onShare.mobile }}" placeholder="Client mobile" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px">
+        <input value="{{ share.address }}" onChange="{{ onShare.address }}" placeholder="Property address" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px">
+        <button onClick="{{ sendShare }}" style="height:46px;border-radius:10px;border:0;background:{{ b.accent }};color:#fff;font-weight:700;font-size:15px;cursor:pointer">Text link to client</button>
+        <sc-if value="{{ v.shareSent }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;font-weight:600;color:#2E7D4F">Sent. The lead appears in the dashboard.</div></sc-if>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- CONNECT MODAL -->
+  <sc-if value="{{ v.connectOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(20,20,20,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:18px;max-width:460px;width:100%;padding:22px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div style="font-size:20px;font-weight:700">Connect {{ cm.name }}</div><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:{{ cm.typeCol }}">{{ cm.typeLabel }}</div></div><button onClick="{{ cm.onClose }}" style="width:32px;height:32px;border-radius:16px;border:1px solid #E2DED8;background:#fff;font-size:16px;cursor:pointer">×</button></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ cm.steps }}" as="st" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45"><span style="width:24px;height:24px;border-radius:12px;background:{{ b.ink }};color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ st.n }}</span><span>{{ st.t }}</span></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ cm.hasInput }}" hint-placeholder-val="{{ false }}"><input value="{{ cm.inputVal }}" onChange="{{ cm.onInput }}" placeholder="{{ cm.inputPh }}" style="height:44px;border:1px solid #D6D1C9;border-radius:10px;padding:0 12px;font-size:15px;font-family:'JetBrains Mono',monospace"></sc-if>
+        <sc-if value="{{ cm.hasCode }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;background:#F6F4F0;border-radius:10px;padding:12px;word-break:break-all">{{ cm.code }}</div></sc-if>
+        <button onClick="{{ cm.onBtn }}" style="height:48px;border-radius:12px;border:0;background:{{ b.accent }};color:#fff;font-weight:700;font-size:15px;cursor:pointer">{{ cm.btn }}</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;partnerType&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Real estate agent&quot;,&quot;Buyer's agent&quot;,&quot;Accountant&quot;,&quot;Financial planner&quot;,&quot;Conveyancer / solicitor&quot;],&quot;default&quot;:&quot;Real estate agent&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;brandPreset&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;LJ Hooker&quot;,&quot;BetterWayLoan&quot;,&quot;Neutral&quot;],&quot;default&quot;:&quot;LJ Hooker&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDevLog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = this.load() || this.fresh();
+  scrollRef = React.createRef();
+
+  img(id) { return 'https://images.unsplash.com/photo-' + id + '?auto=format&fit=crop&w=900&q=70'; }
+  presets() {
+    return {
+      'LJ Hooker': { name: 'LJ Hooker', sub: 'Home Loans', ink: '#2B2B2B', accent: '#E8730C', bar1: '#FDB913', bar2: '#F58220', bar3: '#E2231A', tint: '#FFF5EA' },
+      'BetterWayLoan': { name: 'BetterWayLoan', sub: '', ink: '#14324F', accent: '#1E8C6E', bar1: '#7FD1B3', bar2: '#1E8C6E', bar3: '#14324F', tint: '#EAF5F0' },
+      'Neutral': { name: 'HomeReady', sub: 'Buyer reports', ink: '#25303B', accent: '#B5532C', bar1: '#E9C46A', bar2: '#B5532C', bar3: '#25303B', tint: '#F6F1EA' }
+    };
+  }
+  seedListings() {
+    const I = (id) => this.img(id);
+    return [
+      { id: 'L1', street: '8 Marlborough Street', suburb: 'Bondi NSW 2026', beds: 3, baths: 2, cars: 1, type: 'House', guide: 'Guide $2,350,000 – $2,500,000', price: 2400000, openHome: 'Open Sat 11:00–11:30am', strata: false,
+        photos: [I('1600596542815-ffad4c1539a9'), I('1600607687939-ce8a6c25118c'), I('1600566753190-17f0baa2a6c3'), I('1600210492486-724fe5c67fb0')], bpUploaded: true,
+        core: { est: '$2.31m – $2.58m', conf: 'High', facts: [{ k: 'Land', v: '316 m²' }, { k: 'Built', v: 'c. 1925' }, { k: 'Suburb median', v: '$3.65m' }, { k: 'Days on market (area)', v: '24' }],
+          history: [{ d: 'Mar 2017', p: '$1,720,000' }, { d: 'Aug 2009', p: '$965,000' }, { d: 'Feb 2001', p: '$540,000' }],
+          comps: [{ a: '14 Wellington St, Bondi', m: 'Sold Aug 2026 · 3 bed · 290 m²', p: '$2,460,000' }, { a: '3 Brighton Bvd, Bondi', m: 'Sold Jul 2026 · 3 bed · 330 m²', p: '$2,610,000' }, { a: '27 Murriverie Rd, Bondi', m: 'Sold Jun 2026 · 3 bed · 278 m²', p: '$2,285,000' }] } },
+      { id: 'L2', street: '4/21 Bay Street', suburb: 'Double Bay NSW 2028', beds: 2, baths: 2, cars: 1, type: 'Apartment', guide: 'Guide $1,450,000', price: 1450000, openHome: 'Open Sat 12:15–12:45pm', strata: true,
+        photos: [I('1502672260266-1c1ef2d93688'), I('1560448204-e02f11c3d0e2'), I('1484154218962-a197022b5858')], bpUploaded: false,
+        core: { est: '$1.39m – $1.52m', conf: 'Medium', facts: [{ k: 'Internal', v: '96 m²' }, { k: 'Strata lots', v: '12' }, { k: 'Suburb median (unit)', v: '$1.42m' }, { k: 'Days on market (area)', v: '31' }],
+          history: [{ d: 'Nov 2018', p: '$1,180,000' }, { d: 'May 2011', p: '$760,000' }],
+          comps: [{ a: '9/35 Bay St, Double Bay', m: 'Sold Sep 2026 · 2 bed', p: '$1,485,000' }, { a: '2/12 Cross St, Double Bay', m: 'Sold Jul 2026 · 2 bed', p: '$1,395,000' }] } },
+      { id: 'L3', street: '17 Fletcher Street', suburb: 'Tamarama NSW 2026', beds: 4, baths: 3, cars: 2, type: 'House', guide: 'Guide $4,800,000', price: 4800000, openHome: 'Open Sun 10:00–10:30am', strata: false,
+        photos: [I('1512917774080-9991f1c4c750'), I('1600585154340-be6161a56a0c'), I('1600210492486-724fe5c67fb0')], bpUploaded: true,
+        core: { est: '$4.55m – $5.10m', conf: 'Medium', facts: [{ k: 'Land', v: '410 m²' }, { k: 'Built', v: '2008' }, { k: 'Suburb median', v: '$5.2m' }, { k: 'Days on market (area)', v: '28' }],
+          history: [{ d: 'Oct 2014', p: '$2,950,000' }],
+          comps: [{ a: '6 Gaerloch Ave, Tamarama', m: 'Sold Aug 2026 · 4 bed', p: '$4,920,000' }, { a: '40 Pacific Ave, Tamarama', m: 'Sold May 2026 · 4 bed', p: '$4,610,000' }] } }
+    ];
+  }
+  seedProducts() {
+    return [
+      { id: 'p1', name: 'Advantage Variable', lender: 'LJ Hooker Home Loans', type: 'Variable', base: '5.74', comp: '5.78', tag: 'White label', feat: 'Offset account · No annual fee · Free redraw', show: true },
+      { id: 'p2', name: 'Advantage Fixed 2 yr', lender: 'LJ Hooker Home Loans', type: 'Fixed 2 yrs', base: '5.59', comp: '6.12', tag: 'White label', feat: 'Rate certainty · $10k/yr extra repayments', show: true },
+      { id: 'p3', name: 'Premier Package', lender: 'LJ Hooker Home Loans', type: 'Variable', base: '5.84', comp: '6.09', tag: 'Package', feat: '100% offset · $395 annual fee · Up to 10 offsets', show: true, tmd: 'Owner-occupiers only' },
+      { id: 'p4', name: 'Basic Variable', lender: 'Panel lender A', type: 'Variable', base: '5.94', comp: '5.97', tag: 'Panel', feat: 'Low fees · Redraw', show: true },
+      { id: 'p5', name: 'Standard Variable', lender: 'Panel lender B', type: 'Variable', base: '6.14', comp: '6.31', tag: 'Panel', feat: 'Offset · Split option', show: true }
+    ];
+  }
+  seedLeads() {
+    return [
+      { id: 's1', name: 'Daniel Wong', mobile: '0412 553 381', listingId: 'L1', source: 'Open-home check-in (Rex)', finance: 'Pre-approved', stage: 'Reports sent', time: 'Today 11:12am', consents: { sms: '11:12', privacy: '11:12' } },
+      { id: 's2', name: 'Priya & Tom Nair', mobile: '0433 210 978', listingId: 'L1', source: 'Open-home QR', finance: 'Not arranged', stage: 'Pre-approval submitted', time: 'Today 11:26am', product: 'Advantage Variable', rate: 5.74, incomeN: 310000, loanN: 1880000, apps: 2, consents: { sms: '11:18', cg: '11:20', privacy: '11:20', credit: '11:26', decl: '11:26' },
+        facts: [{ k: 'Applicants', v: '2 · Full-time PAYG' }, { k: 'Household income', v: '$310,000' }, { k: 'Deposit', v: '$520,000' }, { k: 'Loan sought', v: '$1,880,000' }, { k: 'LVR', v: '78%' }, { k: 'Living', v: 'Renting · 3+ yrs' }, { k: 'Liabilities', v: 'Cards $15k limit · HECS $22k' }, { k: 'Residency', v: 'Australian citizens' }],
+        docs: ['Licence ×2 (OCR verified)', 'Payslips ×4', 'Bank data via CDR'] },
+      { id: 's3', name: 'Megan Clarke', mobile: '0401 774 120', listingId: 'L2', source: 'Conveyancer link · Harbour Conveyancing', finance: 'Has a loan', stage: 'Indicative rate', time: 'Yesterday', product: 'Advantage Variable', rate: 5.74, incomeN: 185000, loanN: 1090000, apps: 1, consents: { sms: 'Yesterday', cg: 'Yesterday', privacy: 'Yesterday' },
+        facts: [{ k: 'Current lender', v: 'Major bank' }, { k: 'Current rate', v: '6.39%' }, { k: 'Loan sought', v: '$1,090,000' }, { k: 'Income', v: '$185,000' }], docs: ['Not yet started'] }
+    ];
+  }
+  defaultsF(price) {
+    return { mobile: '', otp: '', price: this.money(price), deposit: '', income: '', purpose: 'Owner-occupier', curLender: '', curRate: '',
+      title: '', first: '', surname: '', dob: '', licNo: '', licState: '', licExp: '', email: '', address: '', living: '', addrTime: '', prevAddress: '', residency: '', marital: '', dependants: '', joint: '', partnerMobile: '',
+      emp: 'Full-time', employer: '', jobTitle: '', jobTime: '', prevEmployer: '', abn: '', salary: '', otherIncome: '', savings: '', cards: '', loans: '', hecs: '', hecsAmt: '', otherProp: '' };
+  }
+  fresh() {
+    const pk = this.props.brandPreset || 'LJ Hooker';
+    const listings = this.seedListings();
+    return { v: 2, audit: [
+        { t: '20 Oct, 11:26:40 am', lead: 'Priya & Tom Nair', event: 'Declaration & credit check consent', detail: 'Both applicants · IP logged' },
+        { t: '20 Oct, 11:21:05 am', lead: 'Priya & Tom Nair', event: 'Comparison displayed', detail: '5 products · comparison rate warning · not-whole-of-market notice' },
+        { t: '20 Oct, 11:20:12 am', lead: 'Priya & Tom Nair', event: 'Credit Guide received', detail: 'v1.2 shown before any rates' },
+        { t: '20 Oct, 11:18:47 am', lead: 'Priya & Tom Nair', event: 'SMS & contact consent', detail: 'Mobile verified 0433 210 978' }], liveConsents: {}, bid: {}, notify: [], dataMode: 'Sandbox (test data)', intSearch: '', connecting: null, apiKey: '', cgChecked: false, cgAccepted: false,
+      view: 'buyer', step: 'landing', photo: 0, brand: { ...(this.presets()[pk] || this.presets()['LJ Hooker']) }, preset: pk,
+      broker: { name: 'Eric Greening J.P.', firstName: 'Eric', office: 'Sydney CBD & Eastern Suburbs', phone: '0407 346 269', email: 'egreening@ljhookerhomeloans.com.au', acl: '380270' },
+      agent: { name: 'Sarah Mitchell', agency: 'LJ Hooker Double Bay' },
+      listings, listingId: 'L1', source: 'Open-home QR', f: this.defaultsF(listings[0].price), finance: null, bp: 'Ordering…', reportKey: null, docs: {}, ocrBusy: false, bankDone: false,
+      consent: { a: false, b: false, c: false }, selProduct: 'p1', leads: this.seedLeads(), products: this.seedProducts(), log: [], brokerLeadId: 's2',
+      offer: { productId: 'p1', rate: '5.69', note: 'Rate discount approved subject to valuation. I\'ll call to confirm next steps.' },
+      crm: ['Rex'], partnerType: 'Real estate agent', share: { mobile: '', address: '' }, shareSent: false, site: '' };
+  }
+  load() { try { const s = JSON.parse(localStorage.getItem('lg_demo_v1')); if (s && s.v === 2) { s.docs = {}; s.reportKey = null; return s; } } catch (e) {} return null; }
+  standalone() { try { return window.self === window.top && matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; } }
+  appMode() { try { return new URLSearchParams(location.search).get('app') === 'buyer' || this.standalone(); } catch (e) { return false; } }
+  componentDidMount() {
+    if (this.state.step === 'reports' && this.state.bp !== 'Ready') this.startBp();
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.installEvt = e; this.forceUpdate(); });
+    if ('serviceWorker' in navigator && this.appMode()) navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+  componentDidUpdate(pp, ps) {
+    try { localStorage.setItem('lg_demo_v1', JSON.stringify({ ...this.state, docs: {} })); } catch (e) {}
+    if (pp.brandPreset !== this.props.brandPreset && this.props.brandPreset) this.applyPreset(this.props.brandPreset);
+    if (pp.partnerType !== this.props.partnerType && this.props.partnerType) this.setPartner(this.props.partnerType);
+    if (ps.step !== this.state.step && this.scrollRef.current) this.scrollRef.current.scrollTop = 0;
+  }
+  profiles() {
+    return {
+      'Real estate agent': { tab: 'Agent dashboard', who: 'Sarah Mitchell', org: 'LJ Hooker Double Bay', kicker: '', reportsTitle: 'Free buyer reports for this home', cta: 'Get my free reports', extra: 'Instant rate check', purpose: 'Owner-occupier',
+        sources: ['Open-home QR', 'Open-home check-in (CRM)', 'SMS from agent'], propsLabel: 'Listings', propsSub: 'listings sync automatically from', simBtn: 'Simulate open-home check-in', simSource: 'Open-home check-in',
+        intHead: 'Connect your CRM (one click)', intNote: 'Pulls listings, photos, open-home times and documents. Open-home check-ins trigger the buyer SMS. Leads are written back.',
+        ints: [['Rex', 'Sales CRM'], ['VaultRE', 'Sales CRM'], ['Agentbox', 'Sales CRM'], ['MyDesktop', 'Sales CRM'], ['Box+Dice', 'Sales CRM'], ['Eagle Software', 'Sales + PM'], ['PropertyMe', 'Property mgmt'], ['PropertyTree', 'Property mgmt'], ['Console Cloud', 'Property mgmt']] },
+      "Buyer's agent": { tab: "Buyer's agent dashboard", who: 'Olivia Grant', org: 'Grant Property Advocacy', kicker: 'Your buyer\'s agent has prepared reports for a property on your shortlist.', reportsTitle: 'Due-diligence pack for your shortlist', cta: 'Open my due-diligence pack', extra: 'Pre-approval before auction day', purpose: 'Owner-occupier',
+        sources: ['Shortlist link (SMS)', 'Shortlist link (email)', 'Inspection QR'], propsLabel: 'Client shortlists', propsSub: 'shortlisted properties from', simBtn: 'Send shortlist to a client', simSource: 'Shortlist link',
+        intHead: 'Connect your tools', intNote: 'Add properties by pasting a listing URL or address. Reports and photos are pulled automatically. Client activity is logged to your CRM.',
+        ints: [['HubSpot', 'CRM'], ['Pipedrive', 'CRM'], ['Salesforce', 'CRM'], ['Rex', 'Agent CRM'], ['Domain listing URL', 'Paste to add'], ['realestate.com.au URL', 'Paste to add']] },
+      'Accountant': { tab: 'Accountant dashboard', who: 'Michael Chen', org: 'Chen & Co Accountants', kicker: 'Your accountant has arranged free property reports and a finance health check.', reportsTitle: 'Reports + finance health check', cta: 'See my reports & finance check', extra: 'Borrowing power & ownership structure check', purpose: 'Owner-occupier',
+        sources: ['Client SMS from accountant', 'Client email', 'Tax-return meeting QR'], propsLabel: 'Client properties', propsSub: 'client properties from', simBtn: 'Send to a client', simSource: 'Accountant link',
+        intHead: 'Connect your practice software', intNote: 'Client name and mobile come from your practice system. Finance outcomes are logged back as a client note. No client financials leave without consent.',
+        ints: [['Xero Practice Manager', 'Practice mgmt'], ['MYOB Practice', 'Practice mgmt'], ['FYI Docs', 'Documents'], ['Karbon', 'Workflow'], ['APS', 'Practice mgmt'], ['Practice Ignition', 'Engagement']] },
+      'Financial planner': { tab: 'Planner dashboard', who: 'Rebecca Hall', org: 'Harbourside Wealth', kicker: 'Your financial planner has shared reports and a loan check for this investment.', reportsTitle: 'Investment property reports', cta: 'Get my investment reports', extra: 'Investment loan & cash-flow check', purpose: 'Investor',
+        sources: ['Client SMS from planner', 'Client email', 'Review meeting QR'], propsLabel: 'Client properties', propsSub: 'client properties from', simBtn: 'Send to a client', simSource: 'Planner link',
+        intHead: 'Connect your advice software', intNote: 'Client details come from your advice platform. Loan outcomes feed the client file so the strategy stays in one place.',
+        ints: [['Xplan', 'Advice platform'], ['AdviserLogic', 'Advice platform'], ['Midwinter', 'Advice platform'], ['Salesforce FSC', 'CRM'], ['Plutosoft', 'Advice platform'], ['FYI Docs', 'Documents']] },
+      'Conveyancer / solicitor': { tab: 'Conveyancer dashboard', who: 'David Nguyen', org: 'Harbour Conveyancing', kicker: 'Your conveyancer has shared these reports before you sign.', reportsTitle: 'Check before you sign', cta: 'View my pre-contract reports', extra: 'Finance check before cooling-off ends', purpose: 'Owner-occupier',
+        sources: ['Matter SMS from conveyancer', 'Client email', 'Contract review link'], propsLabel: 'Matters', propsSub: 'matters from', simBtn: 'Send to a client', simSource: 'Conveyancer link',
+        intHead: 'Connect your matter software', intNote: 'New matters create a client link automatically. Title and contract come straight from the matter. Finance status is logged so settlement isn\'t at risk.',
+        ints: [['LEAP', 'Matter mgmt'], ['Smokeball', 'Matter mgmt'], ['Actionstep', 'Matter mgmt'], ['PEXA', 'Settlement'], ['InfoTrack', 'Searches'], ['Settle Easy', 'Conveyancing']] }
+    };
+  }
+  setPartner(t) {
+    const p = this.profiles()[t]; if (!p) return;
+    this.setState(s => ({ partnerType: t, source: p.sources[0], crm: [p.ints[0][0]], f: { ...s.f, purpose: p.purpose } }));
+  }
+  applyPreset(k) { const p = this.presets()[k]; if (p) this.setState({ brand: { ...p }, preset: k }); }
+
+  num(s) { return Number(String(s || '').replace(/[^0-9.]/g, '')) || 0; }
+  money(n) { return '$' + Math.round(n).toLocaleString('en-AU'); }
+  pmt(r, P) { const i = r / 100 / 12, n = 360; return i ? P * i / (1 - Math.pow(1 + i, -n)) : P / n; }
+  now() { const d = new Date(); return d.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+  log(svc, msg) { this.setState(s => ({ log: [{ t: this.now(), svc, msg }, ...s.log].slice(0, 40) })); }
+  audit(lead, event, detail) { const t = new Date().toLocaleString('en-AU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' }); this.setState(s => ({ audit: [{ t, lead, event, detail }, ...(s.audit || [])].slice(0, 200) })); }
+  setLC(k) { const t = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }); this.setState(s => ({ liveConsents: { ...(s.liveConsents || {}), [k]: t } })); }
+  svc(path, ...args) { try { const fn = path.split('.').reduce((o, k) => o && o[k], window.LGS); if (fn) return fn(...args); } catch (e) {} return Promise.resolve({}); }
+  setF(k, val) { this.setState(s => ({ f: { ...s.f, [k]: val } })); }
+  go(step) { this.setState({ step }); }
+  listing() { return this.state.listings.find(l => l.id === this.state.listingId) || this.state.listings[0]; }
+  upsertLive(patch) {
+    this.setState(s => {
+      const ex = s.leads.find(l => l.id === 'live');
+      const L = s.listings.find(l => l.id === s.listingId);
+      const base = ex || { id: 'live', name: 'New buyer', mobile: s.f.mobile, listingId: s.listingId, source: s.source, finance: '—', stage: 'Reports sent', time: 'Just now', live: true };
+      const lead = { ...base, ...patch, listingId: L.id };
+      return { leads: ex ? s.leads.map(l => l.id === 'live' ? lead : l) : [lead, ...s.leads] };
+    });
+  }
+  startBp() {
+    const L = this.listing();
+    if (L.bpUploaded) { this.setState({ bp: 'Ready' }); return; }
+    this.setState({ bp: 'Ordering…' });
+    this.log('reports.orderBuildingPest', 'No vendor report in CRM → ordered from inspector panel, cached for ' + L.street);
+    this.svc('reports.orderBuildingPest', L.id).then(() => { this.setState({ bp: 'Ready' }); this.log('sms.sendLink', 'Building & pest ready → SMS to buyer'); });
+  }
+  quote() {
+    const f = this.state.f, price = this.num(f.price), dep = this.num(f.deposit), inc = this.num(f.income);
+    const loan = Math.max(price - dep, 0), lvr = price ? loan / price * 100 : 0;
+    const load = (lvr > 90 ? 0.45 : lvr > 80 ? 0.25 : lvr > 70 ? 0.1 : 0) + (f.purpose === 'Investor' ? 0.25 : 0);
+    const rows = this.state.products.filter(p => p.show && !(f.purpose === 'Investor' && p.tmd === 'Owner-occupiers only')).map(p => {
+      const rate = this.num(p.base) + load, comp = this.num(p.comp) + load;
+      return { ...p, rate, comp, repayN: this.pmt(rate, loan) };
+    }).sort((a, b) => a.rate - b.rate);
+    return { price, dep, inc, loan, lvr, rows };
+  }
+
+  renderVals() {
+    const s = this.state, b = s.brand, f = s.f, L = this.listing();
+    const PR = this.profiles(), P = PR[s.partnerType] || PR['Real estate agent'];
+    const pov = (s.partners || {})[s.partnerType] || {};
+    const sharer = { name: pov.name ?? P.who, agency: pov.agency ?? P.org };
+    const chip = (field, opts, after) => opts.map(o => { const sel = f[field] === o; return { label: o, bg: sel ? b.ink : '#fff', fg: sel ? '#fff' : b.ink, bd: sel ? b.ink : '#D6D1C9', onClick: () => { this.setF(field, o); after && after(o); } }; });
+    const stChip = (key, opts, fn) => opts.map(o => { const sel = s[key] === o; return { label: o, bg: sel ? b.ink : '#fff', fg: sel ? '#fff' : b.ink, bd: sel ? b.ink : '#D6D1C9', onClick: () => fn ? fn(o) : this.setState({ [key]: o }) }; });
+    const on = {}; Object.keys(f).forEach(k => { on[k] = e => this.setF(k, e.target.value); });
+    const field = (k, label, ph) => ({ label, value: f[k], ph: ph || '', onChange: on[k], bd: '#D6D1C9', bg: '#fff' });
+
+    // steps
+    const steps = ['landing', 'mobile', 'otp', 'reports', 'credit_guide', 'quote', 'compare', 'pa_intro', 'pa_id', 'pa_you', 'pa_work', 'pa_money', 'pa_review', 'pa_done', 'sent'];
+    const st = {}; steps.forEach(x => st[x] = s.step === x);
+    const backMap = { mobile: 'landing', otp: 'mobile', credit_guide: 'reports', quote: 'reports', compare: 'quote', pa_intro: 'compare', pa_id: 'pa_intro', pa_you: 'pa_id', pa_work: 'pa_you', pa_money: 'pa_work', pa_review: 'pa_money', sent: 'compare' };
+    const stageLabel = { credit_guide: 'Credit Guide', mobile: 'Free reports', otp: 'Free reports', reports: 'Your reports', quote: 'Step 1 of 2 · Indicative rate', compare: 'Step 1 of 2 · Compare', pa_intro: 'Step 2 of 2 · Pre-approval', pa_id: 'Pre-approval · ID', pa_you: 'Pre-approval · About you', pa_work: 'Pre-approval · Income', pa_money: 'Pre-approval · Assets & debts', pa_review: 'Pre-approval · Review', pa_done: 'Submitted', sent: 'Rates sent' }[s.step] || '';
+    const prog = { pa_id: '20%', pa_you: '40%', pa_work: '60%', pa_money: '80%', pa_review: '95%' }[s.step];
+
+    // quote
+    const Q = this.quote(), best = Q.rows[0];
+    const sel = Q.rows.find(p => p.id === s.selProduct) || best;
+    const curRate = this.num(f.curRate);
+    const saving = best && curRate ? this.pmt(curRate, Q.loan) - best.repayN : 0;
+    const q = {
+      loanTxt: this.money(Q.loan), lvrTxt: Q.lvr.toFixed(0) + '%', invalid: !(Q.price > 0 && Q.dep > 0), op: (Q.price > 0 && Q.dep > 0) ? 1 : 0.4,
+      bestRate: best ? best.rate.toFixed(2) + '%' : '—', bestComp: best ? best.comp.toFixed(2) + '%' : '—', bestRepay: best ? this.money(best.repayN) : '—',
+      power: Q.inc ? this.money(Q.inc * 6.1) : 'add income', hasSaving: s.finance === 'Has a loan' && saving > 20, saving: this.money(saving), curRateTxt: curRate.toFixed(2) + '%',
+      selName: sel ? sel.name : '', count: Q.rows.length,
+      tmdNote: (f.purpose === 'Investor' && s.products.some(p => p.show && p.tmd === 'Owner-occupiers only')) ? 'Some products are hidden because you are outside their target market (owner-occupiers only).' : '',
+      rows: Q.rows.map(p => { const isSel = sel && p.id === sel.id; const wl = p.tag === 'White label';
+        return { name: p.name, lender: p.lender, type: p.type, tag: p.tag, rateTxt: p.rate.toFixed(2) + '%', compTxt: p.comp.toFixed(2) + '%', repay: this.money(p.repayN), featTxt: p.feat,
+          bd: isSel ? b.accent : '#E7E2DA', tagBg: wl ? b.accent : '#F1EEE9', tagFg: wl ? '#fff' : '#4B4B4B', onClick: () => this.setState({ selProduct: p.id }) }; })
+    };
+
+    // reports
+    const rep = [
+      { key: 'core', name: 'Property report', source: 'CoreLogic RP Data · value, sales history, comparables', status: 'Ready' },
+      { key: 'bp', name: 'Building & pest', source: L.bpUploaded ? 'Vendor-commissioned · uploaded by agent in ' + (s.crm[0] || 'CRM') : 'Ordered from inspector panel for you', status: s.bp },
+      { key: 'strata', name: 'Strata report', source: L.strata ? 'Strata inspection · levies, works, by-laws' : 'Not applicable: freehold title', status: L.strata ? 'Ready' : 'N/A' },
+      { key: 'title', name: 'Title search', source: 'NSW Land Registry via title search provider', status: 'Ready' },
+      { key: 'contract', name: 'Contract of sale', source: 'From agent CRM documents', status: 'Ready' }
+    ];
+    const reports = rep.map(r => ({ ...r, ready: r.status === 'Ready', notReady: r.status !== 'Ready', onView: () => this.setState({ reportKey: r.key }) }));
+    const rk = rep.find(r => r.key === s.reportKey);
+    const docSumm = { bp: 'Summary: no major defects. Minor: gutter repair, termite barrier due 2027.', strata: 'Admin fund healthy · Levies $1,840/qtr · No special levy planned', title: 'Registered proprietor matches vendor · 1 easement (drainage)', contract: 'Contract of sale · 38 pages · Section 66W available' };
+    const rv = rk ? { name: rk.name, source: rk.source, isCore: rk.key === 'core', isDoc: rk.key !== 'core', summary: docSumm[rk.key] || '', meta: rk.key === 'bp' ? 'PDF · 24 pages · inspected 14 Oct 2026' : 'PDF · synced from listing documents' } : { isCore: false, isDoc: false };
+
+    const finChoice = (o) => {
+      this.setState({ finance: o });
+      this.upsertLive({ finance: o });
+      this.log('crm.writeLead', 'Finance status "' + o + '" → ' + (s.crm[0] || 'CRM') + ' contact note');
+      if (o !== 'Pre-approved') this.go(s.cgAccepted ? 'quote' : 'credit_guide');
+    };
+    const finOpts = ['Pre-approved', 'Has a loan', 'Not arranged'].map(o => { const isSel = s.finance === o; const label = { 'Pre-approved': 'Yes, I\'m pre-approved', 'Has a loan': 'I have a loan, compare it', 'Not arranged': 'Not yet, show me rates' }[o];
+      return { label, bg: isSel ? '#fff' : 'transparent', fg: isSel ? b.ink : '#fff', bd: isSel ? '#fff' : 'rgba(255,255,255,.4)', onClick: () => finChoice(o) }; });
+
+    // docs tiles
+    const dv = (k, label, hint, icon) => { const d = s.docs[k]; const has = !!d; const isImg = has && d !== 'sample';
+      return { label: has ? (isImg ? '' : label + ' ✓') : label, hint: has ? (isImg ? '' : 'Sample attached') : hint, icon: has ? (isImg ? '' : '✓') : icon, hasImg: isImg, url: isImg ? d : '', empty: !has,
+        bd: has ? '#2E7D4F' : '#B9B3A9', bg: has ? '#EEF7F1' : '#FAF9F6',
+        onFile: (e) => { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.gotDoc(k, file.type.startsWith('image') ? url : 'sample'); },
+        onSample: () => this.gotDoc(k, 'sample') }; };
+    const selfEmp = f.emp === 'Self-employed';
+    const idTiles = [dv('licFront', 'Front', 'Tap to take photo', '📷'), dv('licBack', 'Back', 'Tap to take photo', '📷')];
+    const incomeTiles = selfEmp ? [dv('tax1', 'Tax return 2025', 'or notice of assessment', '📄'), dv('tax2', 'Tax return 2024', 'or notice of assessment', '📄')]
+      : [dv('pay1', 'Latest payslip', 'photo or PDF', '📄'), dv('pay2', 'Previous payslip', 'photo or PDF', '📄')];
+    const idFields = [field('first', 'First & middle names'), field('surname', 'Surname'), field('dob', 'Date of birth', 'DD/MM/YYYY'), field('licNo', 'Licence number'), field('licState', 'State issued'), field('licExp', 'Expiry')]
+      .map(x => s.docs.licFront && x.value ? { ...x, bg: '#F3FAF5', bd: '#9BCBAE' } : x);
+    const workFields = selfEmp ? [field('abn', 'ABN'), field('employer', 'Business name'), field('salary', 'Net profit last year', '$')]
+      : [field('employer', 'Employer'), field('jobTitle', 'Job title'), field('salary', 'Gross salary (excl. super)', '$'), field('otherIncome', 'Overtime / other income (optional)', '$')];
+    const moneyFields = [field('savings', 'Savings & term deposits'), field('cards', 'Total credit card limits'), field('loans', 'Car / personal loan repayments per month')];
+
+    // review
+    const review = [
+      { title: 'You', text: [f.title, f.first, f.surname].filter(Boolean).join(' ') + ' · DOB ' + (f.dob || '—') + ' · ' + (f.residency || '—') + ' · ' + (f.marital || '—') + ' · ' + (f.dependants || '0') + ' dependants', onEdit: () => this.go('pa_you') },
+      { title: 'ID', text: 'Licence ' + (f.licNo || '—') + ' (' + (f.licState || '—') + ') exp ' + (f.licExp || '—') + ' · photos ' + ((s.docs.licFront ? 1 : 0) + (s.docs.licBack ? 1 : 0)) + '/2', onEdit: () => this.go('pa_id') },
+      { title: 'Income', text: f.emp + ' · ' + (f.employer || '—') + ' · ' + (f.salary ? '$' + f.salary : '—') + ' · documents ' + ['pay1', 'pay2', 'tax1', 'tax2'].filter(k => s.docs[k]).length + '/2', onEdit: () => this.go('pa_work') },
+      { title: 'Loan', text: (sel ? sel.name : '') + ' · ' + q.loanTxt + ' · LVR ' + q.lvrTxt + ' · savings ' + (f.savings ? '$' + f.savings : '—') + ' · cards ' + (f.cards ? '$' + f.cards : '$0'), onEdit: () => this.go('pa_money') }
+    ];
+    const cText = { a: 'I declare the information I\'ve provided is true, correct and complete.', b: 'I consent to ' + b.name + ' ' + b.sub + ' obtaining my credit report and verifying my documents with lenders.', c: 'I agree to the privacy policy and credit guide.' };
+    const consents = ['a', 'b', 'c'].map(k => ({ text: cText[k], checked: s.consent[k], onChange: () => this.setState(st2 => ({ consent: { ...st2.consent, [k]: !st2.consent[k] } })) }));
+    const consentOk = s.consent.a && s.consent.b && s.consent.c;
+
+    const live = s.leads.find(l => l.id === 'live');
+    const offer = live && live.offer ? { ...live.offer, rateTxt: Number(live.offer.rate).toFixed(2) + '%' } : null;
+    const tl = ['Submitted', 'Broker reviewing', 'Lender assessment', 'Pre-approved'];
+    const tIdx = offer ? 1 : 0;
+    const timeline = tl.map((t, i) => ({ label: t, dot: i <= tIdx ? b.accent : '#D6D1C9', w: i === tIdx + 1 ? 700 : 500 }));
+
+    // agent
+    const stageCol = (st3) => ({ 'Reports sent': ['#F1EEE9', '#4B4B4B'], 'Indicative rate': ['#FFF1D6', '#7A5200'], 'Pre-approval submitted': [b.accent, '#fff'], 'Offer sent': ['#2E7D4F', '#fff'] }[st3] || ['#F1EEE9', '#4B4B4B']);
+    const leadRows = s.leads.map(l => { const LL = s.listings.find(x => x.id === l.listingId) || L; const c = stageCol(l.stage);
+      return { name: l.name, mobile: l.mobile, street: LL.street, source: l.source, finance: l.finance, stage: l.stage, stageBg: c[0], stageFg: c[1], time: l.time, bg: l.live ? b.tint : '#fff' }; });
+    const qr = (id) => 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=' + encodeURIComponent('https://buy.' + b.name.toLowerCase().replace(/[^a-z]/g, '') + '.app/l/' + id);
+    const listingCards = s.listings.map(l => ({ ...l, img: l.photos[0], qr: qr(l.id), leads: s.leads.filter(x => x.listingId === l.id).length, syncedAt: l.syncedAt || 'Synced 9:02am', auto: [['Property report', 'CoreLogic API', true], ['Building & pest', l.bpUploaded ? 'From ' + (s.crm[0] || 'CRM') : 'Awaiting upload', l.bpUploaded], ['Strata', l.strata ? 'From CRM docs' : 'N/A', true], ['Title search', 'Auto-ordered', true], ['Contract of sale', 'From ' + (s.crm[0] || 'CRM'), true]].map(([name, src, ok]) => ({ name, status: (ok ? '✓ ' : '… ') + src, col: ok ? '#2E7D4F' : '#9A6A00' })), reportsTxt: l.bpUploaded ? '5 reports ready' : 'B&P ordered on demand',
+      onOpen: () => this.setState({ view: 'buyer', listingId: l.id, step: 'landing', photo: 0, f: { ...s.f, price: this.money(l.price) } }),
+      onCopy: () => { try { navigator.clipboard.writeText('https://buy.app/l/' + l.id); } catch (e) {} this.log('share.copyLink', l.street + ' link copied'); } }));
+    const kpis = [{ label: 'Buyers captured', value: s.leads.length }, { label: 'Finance not arranged', value: s.leads.filter(l => l.finance === 'Not arranged' || l.finance === 'Has a loan').length },
+      { label: 'Pre-approvals submitted', value: s.leads.filter(l => l.stage === 'Pre-approval submitted' || l.stage === 'Offer sent').length }, { label: 'Listings live', value: s.listings.length }];
+
+    // broker
+    const finLeads = s.leads.filter(l => l.stage !== 'Reports sent');
+    const blRaw = finLeads.find(l => l.id === s.brokerLeadId) || finLeads[0] || s.leads[0];
+    const blL = s.listings.find(x => x.id === blRaw.listingId) || L;
+    const bl = { name: blRaw.name, mobile: blRaw.mobile, street: blL.street, source: blRaw.source, product: blRaw.product || '—', rateTxt: blRaw.rate ? Number(blRaw.rate).toFixed(2) + '%' : '—',
+      facts: blRaw.facts || [{ k: 'Status', v: blRaw.stage }], docs: blRaw.docs || ['No documents yet'], offerTxt: blRaw.offer ? 'Sent: ' + blRaw.offer.productName + ' at ' + Number(blRaw.offer.rate).toFixed(2) + '%' : 'Not sent yet' };
+    const brokerList = finLeads.map(l => { const isSel = l.id === blRaw.id; const LL = s.listings.find(x => x.id === l.listingId) || L;
+      return { name: l.name, street: LL.street, stage: l.stage, stageFg: l.stage === 'Offer sent' ? '#2E7D4F' : b.accent, bd: isSel ? b.accent : 'transparent', bg: isSel ? b.tint : '#fff', onClick: () => this.setState({ brokerLeadId: l.id }) }; });
+    const offerPick = s.products.map(p => { const isSel = s.offer.productId === p.id; return { label: p.name, bg: isSel ? b.ink : '#fff', fg: isSel ? '#fff' : b.ink, bd: isSel ? b.ink : '#D6D1C9', onClick: () => this.setState(st2 => ({ offer: { ...st2.offer, productId: p.id, rate: p.base } })) }; });
+    const updP = (i, k) => (e) => { const val = e.target.value; this.setState(st2 => ({ products: st2.products.map((p, j) => j === i ? { ...p, [k]: val } : p) })); };
+    const productRows = s.products.map((p, i) => ({ ...p, onName: updP(i, 'name'), onLender: updP(i, 'lender'), onType: updP(i, 'type'), onBase: updP(i, 'base'), onComp: updP(i, 'comp'),
+      showTxt: p.show ? 'Live' : 'Hidden', bg: p.show ? b.ink : '#fff', fg: p.show ? '#fff' : '#6B6B6B', bd: p.show ? b.ink : '#D6D1C9',
+      onToggle: () => this.setState(st2 => ({ products: st2.products.map((x, j) => j === i ? { ...x, show: !x.show } : x) })) }));
+
+    // setup
+    const presetPick = Object.keys(this.presets()).map(k => { const isSel = s.preset === k; return { label: k, bg: isSel ? b.ink : '#fff', fg: isSel ? '#fff' : b.ink, bd: isSel ? b.ink : '#D6D1C9', onClick: () => this.applyPreset(k) }; });
+    const setB = (k) => (e) => { const val = e.target.value; this.setState(st2 => ({ brand: { ...st2.brand, [k]: val }, preset: 'Custom' })); };
+    const onBrand = { name: setB('name'), sub: setB('sub') };
+    const colorPick = [['ink', 'Ink'], ['accent', 'Accent'], ['bar1', 'Bar 1'], ['bar2', 'Bar 2'], ['bar3', 'Bar 3']].map(([k, l]) => ({ label: l, value: b[k], onChange: setB(k) }));
+    const setP = (grp, k) => (e) => { const val = e.target.value; this.setState(st2 => ({ [grp]: { ...st2[grp], [k]: val } })); };
+    const setSharer = (k) => (e) => { const val = e.target.value; this.setState(st2 => { const all = { ...(st2.partners || {}) }; all[st2.partnerType] = { ...sharer, ...(all[st2.partnerType] || {}), [k]: val }; return { partners: all }; }); };
+    const peopleFields = [{ label: 'Your name', value: sharer.name, onChange: setSharer('name') }, { label: 'Business / office', value: sharer.agency, onChange: setSharer('agency') }]
+      .concat([['broker', 'name', 'Broker name'], ['broker', 'phone', 'Broker mobile'], ['broker', 'email', 'Broker email'], ['broker', 'acl', 'ACL number']].map(([g, k, l]) => ({ label: l, value: s[g][k], onChange: setP(g, k) })));
+    const crmList = P.ints;
+    const crmRows = crmList.map(([n, kind]) => { const c = s.crm.includes(n); return { name: n, kind, label: c ? 'Connected' : 'Connect', bg: c ? '#2E7D4F' : '#fff', fg: c ? '#fff' : b.ink, bd: c ? '#2E7D4F' : b.ink,
+      onClick: () => { if (c) { this.setState(st2 => ({ crm: st2.crm.filter(x => x !== n) })); return; } this.log('crm.connect', 'OAuth → ' + n + ' · scopes: listings, contacts, open_homes, documents'); this.svc('crm.connect', n).then(() => this.setState(st2 => ({ crm: [...st2.crm, n] }))); } }; });
+    const sources = [
+      { name: 'Property report', how: 'CoreLogic RP Data API: AVM, sales history, comparables, suburb data', status: 'Connected' },
+      { name: 'Building & pest', how: 'Vendor report from CRM documents; otherwise auto-ordered from inspector panel', status: 'Auto' },
+      { name: 'Strata report', how: 'Strata inspection provider (units & townhouses only)', status: 'Auto' },
+      { name: 'Title search', how: 'Land registry via title search provider, on first buyer request', status: 'Connected' },
+      { name: 'Contract of sale', how: 'Pulled from listing documents in the CRM', status: 'From CRM' }
+    ];
+
+    const tabs = [['buyer', 'Buyer app'], ['agent', P.tab], ['broker', 'Broker portal'], ['compliance', 'Compliance'], ['setup', 'Setup & branding']].map(([k, l]) => ({ label: l, bd: s.view === k ? b.accent : 'transparent', op: s.view === k ? 1 : 0.75, onClick: () => this.setState({ view: k }) }));
+    const listingPick = s.listings.map(l => ({ label: l.street + ', ' + l.suburb.split(' NSW')[0], img: l.photos[0], bd: l.id === L.id ? b.accent : '#E7E2DA',
+      onClick: () => this.setState({ listingId: l.id, step: 'landing', photo: 0, bp: 'Ordering…', f: { ...s.f, price: this.money(l.price) } }) }));
+
+    const youChips = [
+      { label: 'Living situation', opts: chip('living', ['Renting', 'Owner', 'Owner with mortgage', 'With parents', 'Boarding']) },
+      { label: 'Time at this address', opts: chip('addrTime', ['Under 3 years', '3+ years']) },
+      { label: 'Residency', opts: chip('residency', ['Australian citizen', 'Permanent resident', 'Temporary visa']) },
+      { label: 'Marital status', opts: chip('marital', ['Single', 'Married', 'De facto', 'Separated', 'Divorced', 'Widowed']) },
+      { label: 'Dependent children', opts: chip('dependants', ['0', '1', '2', '3+']) },
+      { label: 'Buying with someone?', opts: chip('joint', ['Just me', 'With partner / co-buyer']) }
+    ];
+    const moneyChips = [{ label: 'Own other property?', opts: chip('otherProp', ['No', 'Yes']) }, { label: 'HECS / HELP debt?', opts: chip('hecs', ['No', 'Yes']) }];
+
+    return {
+      b, L, f, on, q, s: st, rv, reports, finOpts, idTiles, incomeTiles, idFields, workFields, moneyFields, youChips, moneyChips, review, consents, timeline,
+      agent: sharer, broker: s.broker, p: { ...P, hasKicker: !!P.kicker, isAgent: s.partnerType === 'Real estate agent' },
+      versionPick: Object.keys(PR).map(k => { const isSel = s.partnerType === k; return { label: k, bg: isSel ? b.ink : '#fff', fg: isSel ? '#fff' : b.ink, bd: isSel ? b.ink : '#D6D1C9', onClick: () => this.setPartner(k) }; }), log: s.log, tabs, listingPick, kpis, listingCards, leadRows, brokerList, bl, offerPick, productRows, offer: s.offer,
+      presetPick, onBrand, colorPick, peopleFields, crmRows, sources, share: s.share, site: s.site, scrollRef: this.scrollRef,
+      pipeline: [
+        { n: 1, t: 'Listing goes live in ' + (s.crm[0] || 'CRM'), d: 'Webhook fires. Photos, price guide, open homes pulled in.', api: 'crm.webhook listing.created' },
+        { n: 2, t: 'Agent docs pulled', d: 'Building & pest, contract, strata found in the listing documents and attached.', api: 'crm.getListingDocuments' },
+        { n: 3, t: 'CoreLogic RP Data report', d: 'Address matched; value range, sales history and comparables generated and cached.', api: 'corelogic.getPropertyReport' },
+        { n: 4, t: 'Buyer link & QR live', d: 'Any later document upload in the CRM is attached and buyers are texted.', api: 'crm.webhook document.uploaded' }
+      ],
+      appNav: [['Reports', '5 ready', 'reports', ['reports']], ['Finance', s.finance === 'Pre-approved' ? 'Arranged' : 'Rates', s.cgAccepted ? 'compare' : 'credit_guide', ['credit_guide', 'quote', 'compare', 'sent']], ['Pre-approval', live && live.offer ? 'Offer in' : (live && live.stage === 'Pre-approval submitted' ? 'Submitted' : 'Apply'), (live && (live.stage === 'Pre-approval submitted' || live.stage === 'Offer sent')) ? 'pa_done' : 'pa_intro', ['pa_intro', 'pa_id', 'pa_you', 'pa_work', 'pa_money', 'pa_review', 'pa_done']]]
+        .map(([label, sub, to, grp]) => { const on2 = grp.includes(s.step); return { label, sub, fg: on2 ? b.ink : '#8A857D', bar: on2 ? b.accent : 'transparent', onClick: () => this.go(to === 'compare' && !this.num(f.deposit) ? 'quote' : to) }; }),
+      install: () => { if (this.installEvt) { this.installEvt.prompt(); this.installEvt = null; } this.log('pwa.install', this.installEvt === undefined ? 'iOS: Share → Add to Home Screen' : 'Install prompt shown'); this.setState({ installDismissed: true }); },
+      dismissInstall: () => this.setState({ installDismissed: true }),
+      is: { buyer: s.view === 'buyer' || this.appMode(), agent: s.view === 'agent', broker: s.view === 'broker', setup: s.view === 'setup', compliance: s.view === 'compliance' },
+      ...this.compliance(s, b, f, P, Q, q, live, blRaw, sharer),
+      reportNames: ['Property report (CoreLogic)', 'Building & pest inspection', L.strata ? 'Strata report' : 'Title search', 'Contract of sale', P.extra],
+      needList: [{ n: 1, t: 'Driver\'s licence (photo of front & back)' }, { n: 2, t: selfEmp ? 'Last 2 tax returns or notices of assessment' : 'Your 2 latest payslips' }, { n: 3, t: 'Savings & debts (or connect your bank)' }],
+      ch: {
+        purpose: chip('purpose', ['Owner-occupier', 'Investor']), title: chip('title', ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']),
+        emp: chip('emp', ['Full-time', 'Part-time', 'Casual', 'Contract', 'Self-employed']), jobTime: chip('jobTime', ['Under 1 year', '1–3 years', '3+ years']),
+        source: stChip('source', P.sources), partnerType: stChip('partnerType', Object.keys(PR), (o) => this.setPartner(o))
+      },
+      v: {
+        showHeader: s.step !== 'landing', cgChecked: !!s.cgChecked, cgMissing: !s.cgChecked, cgOp: s.cgChecked ? 1 : 0.4, connectOpen: !!s.connecting, intSearch: s.intSearch || '',
+        dataModeBadge: { 'Sandbox (test data)': 'SANDBOX: CoreLogic test data, not for decisions.', "Partner's own CoreLogic": 'Property data © CoreLogic, via ' + sharer.agency + '\'s subscription.', 'Platform licence': 'Property data © CoreLogic (RP Data Pty Ltd t/a Cotality).' }[s.dataMode || 'Sandbox (test data)'],
+        dataModeDesc: { 'Sandbox (test data)': 'Free self-serve CoreLogic developer sandbox. Restricted test dataset, for demos and building. Every report is watermarked SANDBOX.', "Partner's own CoreLogic": 'Shoestring route: the agency connects the RP Data subscription it already pays for. Reports are generated under their licence and you pay no data cost.', 'Platform licence': 'Your own commercial data licence with CoreLogic. Switch on once volume justifies it; cost is built into partner fees.' }[s.dataMode || 'Sandbox (test data)'], hasBack: !!backMap[s.step], stageLabel, showProgress: !!prog, progress: prog || '0%',
+        photo: L.photos[s.photo % L.photos.length], cover: L.photos[0], photoCount: (s.photo % L.photos.length + 1) + ' / ' + L.photos.length,
+        mobileInvalid: f.mobile.replace(/\D/g, '').length < 9, mobileOp: f.mobile.replace(/\D/g, '').length < 9 ? 0.4 : 1,
+        otpInvalid: f.otp.replace(/\D/g, '').length !== 4, otpOp: f.otp.replace(/\D/g, '').length !== 4 ? 0.4 : 1,
+        finArranged: s.finance === 'Pre-approved', hasLoan: s.finance === 'Has a loan', reportOpen: !!rk, ocrBusy: s.ocrBusy,
+        needPrevAddr: f.addrTime === 'Under 3 years', isJoint: f.joint === 'With partner / co-buyer', needPrevJob: f.jobTime && f.jobTime !== '3+ years',
+        timeLabel: selfEmp ? 'Time trading' : 'Time with this employer',
+        docTitle: selfEmp ? 'Upload last 2 tax returns' : 'Upload your 2 latest payslips', docHint: selfEmp ? 'Notices of assessment are fine. Lenders need 2 years for self-employed.' : 'The latest two only. Lenders check year-to-date income.',
+        bankLabel: s.bankDone ? 'Bank connected ✓ · totals filled in' : 'Connect your bank (fastest)', hasHecs: f.hecs === 'Yes',
+        consentMissing: !consentOk, consentOp: consentOk ? 1 : 0.4, hasOffer: !!offer, offer: offer || {}, tel: 'tel:' + s.broker.phone.replace(/\s/g, ''),
+        notApp: !this.appMode(), mainPad: this.appMode() ? '0' : '32px 24px 48px',
+        fw: this.appMode() ? '100%' : '390px', fh: this.appMode() ? '100dvh' : '812px', fb: this.appMode() ? '0' : '10px solid #1B1B1B', fr: this.appMode() ? '0' : '48px', fs: this.appMode() ? 'none' : '0 30px 60px -20px rgba(0,0,0,.35)',
+        top: this.appMode() ? '0px' : '40px', bot: (['landing', 'mobile', 'otp'].includes(s.step) ? 0 : 68) + 'px', showNav: !['landing', 'mobile', 'otp'].includes(s.step),
+        showInstall: !s.installDismissed && !this.standalone(),
+        installHint: this.installEvt ? 'Opens full-screen like an app. No app store, nothing to download.' : 'Opens like an app. On iPhone: Share → Add to Home Screen.',
+        crmName: s.crm[0] || 'your CRM', qr: qr(L.id), showLog: this.props.showDevLog ?? true, logEmpty: s.log.length === 0, shareSent: s.shareSent
+      },
+      onSite: (e) => this.setState({ site: e.target.value }),
+      onShare: { mobile: setP('share', 'mobile'), address: setP('share', 'address') },
+      onOfferRate: (e) => { const val = e.target.value; this.setState(st2 => ({ offer: { ...st2.offer, rate: val } })); },
+      onOfferNote: (e) => { const val = e.target.value; this.setState(st2 => ({ offer: { ...st2.offer, note: val } })); },
+
+      back: () => backMap[s.step] && this.go(backMap[s.step]),
+      prevPhoto: () => this.setState(st2 => ({ photo: (st2.photo - 1 + L.photos.length) % L.photos.length })),
+      nextPhoto: () => this.setState(st2 => ({ photo: (st2.photo + 1) % L.photos.length })),
+      goMobile: () => { this.go('mobile'); this.log('analytics.track', 'listing_view · ' + L.id + ' · source=' + s.source); },
+      sendOtp: () => { this.log('sms.sendOtp', '→ ' + f.mobile + ' · 4-digit code'); this.svc('sms.sendOtp', f.mobile); this.go('otp'); },
+      verifyOtp: () => {
+        this.svc('sms.verifyOtp', 'otp', f.otp);
+        this.log('sms.verifyOtp', 'verified ✓ · buyer token issued');
+        this.setLC('sms'); this.audit('Demo buyer', 'SMS & contact consent', 'Mobile verified ' + f.mobile + ' · opt-out in every message');
+        this.log('corelogic.getPropertyReport', L.street + ', ' + L.suburb + ' → branded PDF generated');
+        this.log('crm.writeLead', 'Contact ' + f.mobile + ' → ' + (s.crm[0] || 'CRM') + ' listing ' + L.id + ' (' + s.source + ')');
+        this.log('sms.sendLink', 'Vault link with 5 reports → ' + f.mobile);
+        this.upsertLive({ mobile: f.mobile, source: s.source, stage: 'Reports sent', time: 'Just now' });
+        this.go('reports'); this.startBp();
+      },
+      closeReport: () => this.setState({ reportKey: null }),
+      goQuote: () => this.go(s.cgAccepted ? 'quote' : 'credit_guide'),
+      cgToggle: () => this.setState(st2 => ({ cgChecked: !st2.cgChecked })),
+      cgAccept: () => { this.setState({ cgAccepted: true }); this.setLC('cg'); this.setLC('privacy'); this.audit(f.first || 'Demo buyer', 'Credit Guide received', 'v1.2 shown before any rates · privacy collection notice accepted'); this.log('compliance.creditGuide', 'Credit Guide v1.2 acknowledged → audit trail'); this.go('quote'); },
+      cgPdf: () => this.log('compliance.creditGuide', 'Full Credit Guide PDF opened'),
+      showRates: () => { this.go('compare'); this.upsertLive({ stage: 'Indicative rate', product: best && best.name, rate: best && best.rate }); this.log('pricing.quote', 'LVR ' + q.lvrTxt + ' · ' + Q.rows.length + ' products ranked · lead → broker queue'); this.audit(f.first || 'Demo buyer', 'Comparison displayed', Q.rows.length + ' products · comparison rate warning · not-whole-of-market notice'); },
+      emailRates: () => { this.go('sent'); this.log('sms.sendLink', 'Rate comparison → ' + f.mobile); },
+      goPA: () => { this.go('pa_intro'); this.upsertLive({ product: sel && sel.name, rate: sel && sel.rate }); },
+      goID: () => this.go('pa_id'),
+      goYou: () => this.go('pa_you'),
+      goWork: () => { if (!f.salary && f.income) this.setF('salary', f.income); if (f.joint === 'With partner / co-buyer' && f.partnerMobile) this.log('sms.sendLink', 'Co-applicant link → ' + f.partnerMobile); this.go('pa_work'); },
+      goMoney: () => { if (!f.savings && f.deposit) this.setF('savings', f.deposit); this.go('pa_money'); },
+      goReview: () => this.go('pa_review'),
+      connectBank: () => {
+        this.log('bank.connect', 'CDR consent → 2 accounts, 1 credit card linked');
+        this.svc('bank.connect').then(() => this.setState(st2 => ({ bankDone: true, f: { ...st2.f, savings: st2.f.savings || st2.f.deposit || '185,000', cards: '12,000', loans: '0', otherProp: 'No', hecs: st2.f.hecs || 'No' } })));
+      },
+      submitPA: () => {
+        const name = [f.first, f.surname].filter(Boolean).join(' ') || 'New buyer';
+        const facts = [{ k: 'Applicant', v: name + (f.joint === 'With partner / co-buyer' ? ' + co-buyer' : '') }, { k: 'Employment', v: f.emp + (f.employer ? ' · ' + f.employer : '') }, { k: 'Income', v: f.salary ? '$' + f.salary : '—' },
+          { k: 'Deposit', v: f.deposit ? '$' + f.deposit : '—' }, { k: 'Loan sought', v: q.loanTxt }, { k: 'LVR', v: q.lvrTxt }, { k: 'Living', v: (f.living || '—') + ' · ' + (f.addrTime || '—') },
+          { k: 'Liabilities', v: 'Cards ' + (f.cards ? '$' + f.cards : '$0') + (f.hecs === 'Yes' ? ' · HECS ' + (f.hecsAmt ? '$' + f.hecsAmt : '') : '') }, { k: 'Residency', v: f.residency || '—' }, { k: 'Licence', v: (f.licNo || '—') + ' ' + (f.licState || '') }];
+        const docs = []; if (s.docs.licFront || s.docs.licBack) docs.push('Licence ×' + ((s.docs.licFront ? 1 : 0) + (s.docs.licBack ? 1 : 0)));
+        const inc = ['pay1', 'pay2', 'tax1', 'tax2'].filter(k => s.docs[k]).length; if (inc) docs.push((selfEmp ? 'Tax returns ×' : 'Payslips ×') + inc); if (s.bankDone) docs.push('Bank data via CDR');
+        this.upsertLive({ name, stage: 'Pre-approval submitted', facts, docs: docs.length ? docs : ['No documents'], time: 'Just now' });
+        this.setState({ brokerLeadId: 'live' });
+        this.setLC('credit'); this.setLC('decl');
+        this.audit(name, 'Declaration & credit check consent', 'Accuracy declaration, credit report consent, privacy & credit guide');
+        this.svc('broker.submitFactFind', {});
+        this.log('docs.upload', docs.join(', ') + ' → encrypted vault');
+        this.log('broker.submitFactFind', 'Customer Information Form pre-filled (pages 1–4) → ' + s.broker.email);
+        this.log('crm.writeLead', 'Stage "Pre-approval submitted" → agent ' + s.agent.name + ' notified');
+        this.go('pa_done');
+      },
+      backToReports: () => this.go('reports'),
+
+      simNewListing: () => {
+        const crm = s.crm[0] || 'CRM', id = 'L' + (s.listings.length + 1), I = (x) => this.img(x);
+        const nl = { id, street: '52 Edgecliff Road', suburb: 'Woollahra NSW 2025', beds: 4, baths: 2, cars: 2, type: 'House', guide: 'Guide $3,900,000', price: 3900000, openHome: 'Open Sat 2:00–2:30pm', strata: false, syncedAt: 'Synced just now',
+          photos: [I('1600585154340-be6161a56a0c'), I('1600607687939-ce8a6c25118c'), I('1600566753190-17f0baa2a6c3')], bpUploaded: true,
+          core: { est: '$3.72m – $4.08m', conf: 'High', facts: [{ k: 'Land', v: '505 m²' }, { k: 'Built', v: 'c. 1910' }, { k: 'Suburb median', v: '$4.3m' }, { k: 'Days on market (area)', v: '35' }], history: [{ d: 'Jun 2012', p: '$2,150,000' }], comps: [{ a: '18 Queen St, Woollahra', m: 'Sold Sep 2026 · 4 bed', p: '$3,950,000' }] } };
+        if (s.listings.some(l => l.street === nl.street)) return;
+        this.setState(st2 => ({ listings: [...st2.listings, nl] }));
+        this.log('crm.webhook', crm + ' → listing.created ' + id + ' · ' + nl.street);
+        this.log('crm.getListing', 'Photos ×3, description, price guide, open homes pulled');
+        this.log('crm.getListingDocuments', 'Contract of sale + Building & pest PDF found → classified & attached');
+        this.log('corelogic.getPropertyReport', 'Address matched → AVM, sales history, comparables → branded PDF cached');
+        this.log('share.createLink', 'Buyer link + QR live for ' + id + ' (no agent action)');
+      },
+      simDocUpload: () => {
+        const crm = s.crm[0] || 'CRM', target = s.listings.find(l => !l.bpUploaded);
+        if (!target) { this.log('crm.webhook', 'All listings already have a building report'); return; }
+        this.setState(st2 => ({ listings: st2.listings.map(l => l.id === target.id ? { ...l, bpUploaded: true, syncedAt: 'Synced just now' } : l), bp: st2.listingId === target.id ? 'Ready' : st2.bp }));
+        const n = s.leads.filter(x => x.listingId === target.id).length;
+        this.log('crm.webhook', crm + ' → document.uploaded on ' + target.street + ' ("Building & Pest Report.pdf")');
+        this.log('reports.classify', 'Recognised as building & pest → attached to listing, replaces inspector order');
+        this.log('sms.sendLink', 'Building report now available → ' + n + ' existing buyer' + (n === 1 ? '' : 's'));
+      },
+      syncCrm: () => { this.log('crm.listListings', (s.crm[0] || 'CRM') + ' → ' + s.listings.length + ' listings, photos, open homes, documents'); this.svc('crm.listListings', s.crm[0]); },
+      simCheckin: () => {
+        const names = ['Hannah Lee', 'James O\'Brien', 'Sofia Rossi', 'Liam Patel', 'Grace Kim'];
+        const n = names[s.leads.length % names.length], mob = '04' + Math.floor(10000000 + Math.random() * 89999999).toString().replace(/(\d{2})(\d{3})(\d{3})/, '$1 $2 $3');
+        this.setState(st2 => ({ leads: [{ id: 'c' + Date.now(), name: n, mobile: mob, listingId: L.id, source: P.simSource + ' (' + (st2.crm[0] || 'CRM') + ')', finance: '—', stage: 'Reports sent', time: 'Just now' }, ...st2.leads] }));
+        this.log(s.partnerType === 'Real estate agent' ? 'crm.onOpenHomeCheckIn' : 'crm.onClientCreated', (s.crm[0] || 'CRM') + ': ' + n + ' · ' + L.street);
+        this.log('sms.sendLink', 'Branded buyer link → ' + mob + ' (no agent action)');
+      },
+      exportForm: () => this.log('broker.submitFactFind', 'Customer Information Form PDF generated for ' + bl.name + ' (fields mapped from fact-find)'),
+      sendOffer: () => {
+        const p = s.products.find(x => x.id === s.offer.productId) || s.products[0];
+        const o = { productName: p.name, rate: this.num(s.offer.rate) || this.num(p.base), note: s.offer.note };
+        this.setState(st2 => ({ leads: st2.leads.map(l => l.id === blRaw.id ? { ...l, offer: o, stage: 'Offer sent' } : l) }));
+        this.svc('broker.sendOffer', blRaw.id, o);
+        const br = (s.bid || {})[blRaw.id] || {};
+        this.audit(blRaw.name, 'Best interests record signed', 'Needs: ' + (br.reqs || []).join(', ') + ' · ' + (br.reason || ''));
+        this.audit(blRaw.name, 'Offer sent', p.name + ' @ ' + o.rate.toFixed(2) + '% · commission disclosed');
+        this.log('broker.sendOffer', p.name + ' @ ' + o.rate.toFixed(2) + '% → SMS ' + blRaw.mobile);
+      },
+      addProduct: () => this.setState(st2 => ({ products: [...st2.products, { id: 'p' + Date.now(), name: 'New white-label product', lender: st2.brand.name + ' ' + st2.brand.sub, type: 'Variable', base: '5.79', comp: '5.83', tag: 'White label', feat: 'Edit features', show: true }] })),
+      fetchBrand: () => {
+        const dom = (s.site || '').toLowerCase();
+        this.log('brand.fromWebsite', 'Scraped logo, colours, contact details from ' + (dom || '(no URL)'));
+        if (dom.includes('betterway')) this.applyPreset('BetterWayLoan'); else if (dom.includes('hooker')) this.applyPreset('LJ Hooker');
+      },
+      sendShare: () => {
+        if (!s.share.mobile) return;
+        this.setState(st2 => ({ shareSent: true, leads: [{ id: 'sh' + Date.now(), name: 'Client of ' + (st2.partnerType === 'Accountant' ? 'accountant' : 'conveyancer'), mobile: st2.share.mobile, listingId: L.id, source: st2.partnerType + ' link', finance: '—', stage: 'Reports sent', time: 'Just now' }, ...st2.leads] }));
+        this.log('sms.sendLink', 'Branded link for ' + (s.share.address || L.street) + ' → ' + s.share.mobile);
+      },
+      reset: () => this.setState(this.fresh())
+    };
+  }
+
+  compliance(s, b, f, P, Q, q, live, blRaw, sharer) {
+    const chipS = (sel) => ({ bg: sel ? b.ink : '#fff', fg: sel ? '#fff' : b.ink, bd: sel ? b.ink : '#D6D1C9' });
+    const cg = [
+      { h: 'Who we are', t: s.broker.name + ', ' + b.name + ' ' + b.sub + ' ' + s.broker.office + '. Australian Credit Licence ' + s.broker.acl + '.' },
+      { h: 'Lenders we compare', t: 'Products from the lenders on our panel, not the whole market. White-label products carry the ' + b.name + ' brand and are funded by a partner lender.' },
+      { h: 'How we are paid', t: 'No fee to you. The lender pays us an upfront commission (typically 0.50–0.70% of the loan) and an ongoing trail (typically 0.10–0.20% a year). We tell you the exact amounts before you apply.' },
+      { h: 'Referral', t: sharer.agency + ' referred you and may receive a referral fee from us if your loan settles. It costs you nothing and doesn\'t change your rate.' },
+      { h: 'Complaints', t: 'Call ' + s.broker.firstName + ' on ' + s.broker.phone + '. If it\'s not resolved, contact AFCA (free, independent): afca.org.au, 1800 931 678.' }
+    ];
+    const bidRec = (s.bid || {})[blRaw.id] || { reqs: [], reason: '', signed: false };
+    const setBid = (patch) => this.setState(st2 => ({ bid: { ...(st2.bid || {}), [blRaw.id]: { ...((st2.bid || {})[blRaw.id] || { reqs: [], reason: '', signed: false }), ...patch } } }));
+    const reqOpts = ['Lowest rate', 'Offset account', 'Rate certainty (fixed)', 'Flexibility / redraw', 'Low fees', 'Fast pre-approval'];
+    const isLive = blRaw.id === 'live';
+    const inc = blRaw.incomeN || (isLive ? this.num(f.salary || f.income) + this.num(f.otherIncome) : 0);
+    const loan = blRaw.loanN || (isLive ? Q.loan : 0);
+    const apps = blRaw.apps || (isLive && f.joint === 'With partner / co-buyer' ? 2 : 1);
+    const offRate = this.num(s.offer.rate) || 5.74;
+    const net = inc * 0.70 / 12, hem = (apps > 1 ? 4300 : 2900) + (isLive ? (this.num(f.dependants) * 600) : 0);
+    const commit = isLive ? this.num(f.cards) * 0.038 + this.num(f.loans) : 450;
+    const repay = this.pmt(offRate + 3, loan), surplus = net - hem - commit - repay;
+    const svc = [
+      { k: 'Net income / month (est.)', v: this.money(net) }, { k: 'Living expenses (HEM benchmark)', v: this.money(hem) }, { k: 'Existing commitments', v: this.money(commit) },
+      { k: 'Repayment @ ' + (offRate + 3).toFixed(2) + '% assessment rate', v: this.money(repay) }, { k: 'Monthly surplus', v: this.money(surplus), col: surplus >= 0 ? '#2E7D4F' : '#B3261E', bg: surplus >= 0 ? '#EEF7F1' : '#FCEDEC' }
+    ].map(x => ({ col: '#2B2B2B', bg: '#FAF9F6', ...x }));
+    const bidOk = bidRec.reqs.length > 0 && (bidRec.reason || '').length > 5 && bidRec.signed;
+    const bid = {
+      reqs: reqOpts.map(o => ({ label: o, ...chipS(bidRec.reqs.includes(o)), onClick: () => setBid({ reqs: bidRec.reqs.includes(o) ? bidRec.reqs.filter(x => x !== o) : [...bidRec.reqs, o] }) })),
+      svc, considered: Q.rows.slice(0, 3).map(p => p.name).join(', '), reason: bidRec.reason, signed: !!bidRec.signed,
+      onReason: (e) => setBid({ reason: e.target.value }), onSign: () => setBid({ signed: !bidRec.signed }),
+      blocked: !bidOk, op: bidOk ? 1 : 0.4, status: bidOk ? '✓ Complete' : 'Incomplete: offer locked', statusCol: bidOk ? '#2E7D4F' : '#9A6A00'
+    };
+    const rateSteps = [
+      { n: 1, t: 'Enter the product', d: 'Name, lender, rate and comparison rate in the table below. Rates feed straight from here.' },
+      { n: 2, t: 'Switch it Live', d: 'Live products appear on every buyer\'s Compare screen, sorted lowest rate first.' },
+      { n: 3, t: 'Buyer sees their rate', d: 'Each buyer\'s rate adjusts for their deposit (LVR) and owner-occupier or investor, with repayments and a comparison rate warning.' },
+      { n: 4, t: 'Send a personal offer', d: 'After pre-approval details arrive, pick a product, set the client\'s rate and send. It appears in their app.' }
+    ];
+    const disclosures = [
+      { name: 'Credit Guide', where: 'Buyer app: before any rates are shown', v: 'v1.2 · Active' },
+      { name: 'Privacy & collection notice', where: 'Mobile screen + Credit Guide', v: 'v1.1 · Active' },
+      { name: 'Comparison rate warning', where: 'Compare screen, next to every rate', v: 'Active' },
+      { name: 'Not-whole-of-market notice', where: 'Compare screen', v: 'Active' },
+      { name: 'Commission disclosure', where: 'Credit Guide; exact $ in credit proposal', v: 'Active' },
+      { name: 'Referral fee disclosure', where: 'Credit Guide names the referring partner', v: 'Active' },
+      { name: 'Target market (DDO) filter', where: 'Products hidden outside their target market', v: 'Active' },
+      { name: 'Credit check & declaration', where: 'Pre-approval review screen', v: 'Active' },
+      { name: 'Best interests record', where: 'Broker portal; required before an offer', v: 'Enforced' },
+      { name: 'SMS consent & opt-out', where: 'Every text includes STOP to opt out', v: 'Active' }
+    ];
+    const tick = (x) => x ? '✓ ' + x : '—', col = (x) => x ? '#2E7D4F' : '#B9B3A9';
+    const consentRows = s.leads.map(l => { const c = l.id === 'live' ? (s.liveConsents || {}) : (l.consents || {}); return { name: l.name, sms: tick(c.sms), cg: tick(c.cg), privacy: tick(c.privacy), credit: tick(c.credit), decl: tick(c.decl), c1: col(c.sms), c2: col(c.cg), c3: col(c.privacy), c4: col(c.credit), c5: col(c.decl) }; });
+    const auditRows = (s.audit || []).slice(0, 40);
+    const ITYPE = { 'Rex': 'oauth', 'VaultRE': 'apikey', 'Agentbox': 'partner', 'MyDesktop': 'zapier', 'Box+Dice': 'apikey', 'Eagle Software': 'partner', 'PropertyMe': 'oauth', 'PropertyTree': 'partner', 'Console Cloud': 'partner', 'HubSpot': 'oauth', 'Pipedrive': 'oauth', 'Salesforce': 'oauth', 'Domain listing URL': 'manual', 'realestate.com.au URL': 'manual', 'Xero Practice Manager': 'oauth', 'MYOB Practice': 'partner', 'FYI Docs': 'zapier', 'Karbon': 'apikey', 'APS': 'partner', 'Practice Ignition': 'zapier', 'Xplan': 'partner', 'AdviserLogic': 'apikey', 'Midwinter': 'partner', 'Salesforce FSC': 'oauth', 'Plutosoft': 'partner', 'LEAP': 'partner', 'Smokeball': 'partner', 'Actionstep': 'oauth', 'PEXA': 'partner', 'InfoTrack': 'apikey', 'Settle Easy': 'email', 'Email-in (any system)': 'email', 'Manual upload': 'manual' };
+    const TL = { oauth: ['1-click', '#2E7D4F'], apikey: ['API key', '#2F5F8A'], partner: ['Partner approval', '#9A6A00'], zapier: ['Zapier', '#B5532C'], email: ['Email-in', '#5B4B8A'], manual: ['Manual', '#6B6B6B'] };
+    const all = [...P.ints, ['Email-in (any system)', 'Forward listing emails & PDFs'], ['Manual upload', 'Paste URL or drag PDFs']];
+    const qy = (s.intSearch || '').toLowerCase();
+    const notify = s.notify || [];
+    const intTiles = all.filter(([n]) => !qy || n.toLowerCase().includes(qy)).map(([name, kind]) => {
+      const type = ITYPE[name] || 'apikey', conn = s.crm.includes(name), nt = notify.includes(name);
+      return { name, kind, typeLabel: TL[type][0], typeCol: TL[type][1], tileBd: conn ? '#2E7D4F' : '#E7E2DA',
+        label: conn ? 'Connected ✓' : type === 'partner' ? (nt ? 'We\'ll notify you' : 'Notify me') : 'Connect',
+        bg: conn ? '#2E7D4F' : '#fff', fg: conn ? '#fff' : b.ink, bd: conn ? '#2E7D4F' : b.ink,
+        onClick: () => conn ? this.setState(st2 => ({ crm: st2.crm.filter(x => x !== name) })) : this.setState({ connecting: name, apiKey: '' }) };
+    });
+    const cn = s.connecting, ct = cn ? (ITYPE[cn] || 'apikey') : 'oauth';
+    const slug = (sharer.agency || 'partner').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const done = (msg) => { this.log('crm.connect', msg); this.svc('crm.connect', cn); this.setState(st2 => ({ crm: st2.crm.includes(cn) ? st2.crm : [...st2.crm, cn], connecting: null })); this.audit(sharer.agency, 'Integration connected', cn + ' (' + TL[ct][0] + ')'); };
+    const M = {
+      oauth: { steps: ['Click below. You\'ll be taken to ' + cn + ' to log in.', 'Approve access to listings, contacts, open homes and documents.', 'Done. Everything syncs automatically from now on.'], btn: 'Continue to ' + cn, onBtn: () => done('OAuth → ' + cn + ' approved · webhooks subscribed') },
+      apikey: { steps: ['In ' + cn + ', go to Settings → Integrations / API.', 'Create a key named “' + b.name + ' Buyer App” and copy it.', 'Paste it below. We test it, then sync starts.'], hasInput: true, inputPh: 'Paste API key', btn: 'Connect', onBtn: () => done('API key verified → ' + cn + ' · polling every 15 min') },
+      partner: { steps: [cn + ' requires us to be an approved integration partner. We\'ve applied.', 'Tap below and we\'ll tell you the moment it\'s one-click.', 'Until then, use Email-in or Manual upload. Nothing is blocked.'], btn: 'Notify me', onBtn: () => { this.setState(st2 => ({ notify: [...(st2.notify || []), cn], connecting: null })); this.log('demand.register', sharer.agency + ' wants ' + cn + ' → build queue'); } },
+      zapier: { steps: ['Open our ready-made Zapier template.', 'Choose ' + cn + ' as the trigger: “New listing” or “New document”.', 'Turn the Zap on. Listings and PDFs arrive automatically.'], btn: 'Open Zapier template', onBtn: () => done('Zapier template → ' + cn + ' trigger enabled') },
+      email: { steps: ['Copy your private forwarding address below.', 'Add it as an auto-BCC on listing emails, or forward PDFs to it.', 'We read the address, photos and reports, then attach them.'], hasCode: true, code: 'listings+' + slug + '@in.betterwayloan.com.au', btn: 'Copy address & finish', onBtn: () => { try { navigator.clipboard.writeText('listings+' + slug + '@in.betterwayloan.com.au'); } catch (e) {} done('Email-in address issued for ' + sharer.agency); } },
+      manual: { steps: ['Paste a listing URL or address in the dashboard.', 'Drag in any PDFs (building, contract, strata).', 'Buyer link and QR are created instantly.'], btn: 'Got it', onBtn: () => done('Manual mode enabled') }
+    }[ct];
+    const cm = cn ? { name: cn, typeLabel: TL[ct][0], typeCol: TL[ct][1], steps: M.steps.map((t, i) => ({ n: i + 1, t })), hasInput: !!M.hasInput, inputPh: M.inputPh || '', inputVal: s.apiKey || '', hasCode: !!M.hasCode, code: M.code || '', btn: M.btn, onBtn: M.onBtn,
+      onInput: (e) => this.setState({ apiKey: e.target.value }), onClose: () => this.setState({ connecting: null }) } : { steps: [] };
+    const dataModes = ['Sandbox (test data)', "Partner's own CoreLogic", 'Platform licence'].map(m => ({ label: m, ...chipS((s.dataMode || 'Sandbox (test data)') === m), onClick: () => { this.setState({ dataMode: m }); this.log('corelogic.mode', 'Property data source → ' + m); } }));
+    return {
+      cg, bid, rateSteps, disclosures, consentRows, auditRows, intTiles, cm, dataModes,
+      onIntSearch: (e) => this.setState({ intSearch: e.target.value }),
+      exportAudit: () => {
+        const rows = [['time', 'client', 'event', 'detail'], ...(s.audit || []).map(a => [a.t, a.lead, a.event, a.detail])];
+        const csv = rows.map(r => r.map(x => '"' + String(x || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'audit-trail.csv'; a.click();
+        this.log('compliance.export', (s.audit || []).length + ' audit events exported');
+      },
+      deleteRequest: () => {
+        if (!live) { this.log('privacy.delete', 'No demo buyer record to delete'); return; }
+        this.setState(st2 => ({ leads: st2.leads.map(l => l.id === 'live' ? { ...l, name: 'Deleted (privacy request)', mobile: '—', facts: [{ k: 'Status', v: 'Personal data erased' }], docs: ['Documents destroyed'] } : l) }));
+        this.audit('Demo buyer', 'Privacy deletion processed', 'Personal data & documents erased; minimal credit records retained as required by law');
+        this.log('privacy.delete', 'Buyer data erased · retention exception logged');
+      }
+    };
+  }
+
+  gotDoc(k, url) {
+    this.setState(s => ({ docs: { ...s.docs, [k]: url } }));
+    this.svc('docs.upload', null, k);
+    this.log('docs.upload', k + ' → encrypted vault');
+    if (k === 'licFront') {
+      this.setState({ ocrBusy: true });
+      this.svc('ocr.readLicence', null).then(() => {
+        this.setState(s => ({ ocrBusy: false, f: { ...s.f, first: s.f.first || 'Alex James', surname: s.f.surname || 'Taylor', dob: s.f.dob || '14/03/1990', licNo: s.f.licNo || '18452903', licState: s.f.licState || 'NSW', licExp: s.f.licExp || '14/03/2030', address: s.f.address || '12/40 Bondi Road, Bondi Junction NSW 2022', email: s.f.email || 'alex.taylor@email.com' } }));
+        this.log('ocr.readLicence', '6 fields extracted · name, DOB, licence no., state, expiry, address');
+      });
+    }
+  }
+}
+</script>
+</body>
+</html>

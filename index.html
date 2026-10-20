@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BetterWayLoan Buyer App</title>
+<script>
+  // Buyers on phones (or links with ?app=buyer) go straight to the app; desktop visitors see the full platform demo.
+  var q = location.search || '';
+  var phone = /iPhone|Android.+Mobile/i.test(navigator.userAgent);
+  location.replace('Lead%20Gen%20App.dc.html' + (q || (phone ? '?app=buyer' : '')));
+</script>
+</head>
+<body></body>
+</html>

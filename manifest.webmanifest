@@ -1,0 +1,17 @@
+{
+  "name": "Buyer Reports & Finance",
+  "short_name": "Buyer Reports",
+  "start_url": "./Lead%20Gen%20App.dc.html?app=buyer",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2B2B2B",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
