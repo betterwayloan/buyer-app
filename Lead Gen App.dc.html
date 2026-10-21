@@ -379,6 +379,7 @@ a:hover{color:#E8730C}
               <label style="display:flex;flex-direction:column;gap:5px"><span style="font-size:13px;font-weight:600;color:#5B5B5B">HECS/HELP amount owing</span><input inputmode="numeric" value="{{ f.hecsAmt }}" onChange="{{ on.hecsAmt }}" placeholder="$" style="height:46px;border:1px solid #D6D1C9;border-radius:10px;padding:0 14px;font-size:16px"></label>
             </sc-if>
             <button onClick="{{ goReview }}" style="height:54px;border:0;border-radius:12px;background:{{ b.accent }};color:#fff;font-size:17px;font-weight:700;cursor:pointer">Review</button>
+            <button onClick="{{ finishLater }}" style="height:44px;border:1px solid #D6D1C9;border-radius:12px;background:#fff;color:{{ b.ink }};font-size:15px;font-weight:600;cursor:pointer">{{ v.laterLabel }}</button>
           </div>
         </sc-if>
 
@@ -908,13 +909,36 @@ class Component extends DCLogic {
   }
   load() { try { const s = JSON.parse(localStorage.getItem('lg_demo_v1')); if (s && s.v === 2) { s.docs = {}; s.reportKey = null; return s; } } catch (e) {} return null; }
   standalone() { try { return window.self === window.top && matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; } }
-  appMode() { try { return new URLSearchParams(location.search).get('app') === 'buyer' || this.standalone(); } catch (e) { return false; } }
+  appMode() { try { const q = new URLSearchParams(location.search); return q.get('app') === 'buyer' || !!q.get('p') || !!q.get('l') || this.standalone(); } catch (e) { return false; } }
   componentDidMount() {
+    const lc = (() => { try { return new URLSearchParams(location.search).get('l') || ''; } catch (e) { return ''; } })();
+    if (lc) this.svc('api.listing', lc).then(d => {
+      if (!d || !d.code) return;
+      const has = t => (d.reports || []).find(r => r.type === t);
+      const n = parseInt(String(d.price || '').replace(/[^0-9]/g, ''), 10);
+      const RL = { id: 'R_' + d.code, code: d.code, real: true, street: d.address, suburb: [d.suburb, d.state, d.postcode].filter(Boolean).join(' '), beds: d.beds || 0, baths: d.baths || 0, cars: d.cars || 0, type: d.type || 'Property',
+        guide: d.price || 'Contact agent', price: n > 50000 ? n : this.state.f.price, openHome: String(d.openHomes || '').split('\n')[0], photos: (d.photos && d.photos.length) ? d.photos : this.state.listings[0].photos,
+        bpUploaded: !!has('building_pest'), strata: !!has('strata'), files: d.reports || [],
+        core: { est: has('property') ? 'See the full report' : 'Requested from the agent', conf: '—', facts: [{ k: 'Bedrooms', v: String(d.beds || '—') }, { k: 'Bathrooms', v: String(d.baths || '—') }, { k: 'Car spaces', v: String(d.cars || '—') }, { k: 'Type', v: d.type || '—' }], history: [], comps: [] } };
+      this.setState(s => ({ listings: [RL, ...s.listings.filter(x => !x.real)], listingId: RL.id, source: 'Partner QR · ' + d.partner.name, partners: { ...(s.partners || {}), [s.partnerType]: { name: d.partner.name, agency: d.partner.name } }, bp: RL.bpUploaded ? 'Ready' : 'Requested' }));
+    });
+    this.svc('api.leads').then(rows => {
+      if (!Array.isArray(rows) || !rows.length || !rows[0].ref) return;
+      const lab = { contact: 'Reports sent', indicative: 'Indicative rate', preapproval: 'Pre-approval submitted' };
+      const ck = { contact: 'sms', declaration: 'decl', credit_check: 'credit', privacy_credit_guide: 'privacy' };
+      const mapped = rows.map(r => ({ id: r.ref, real: true, name: r.name || 'Buyer', mobile: r.mobile, listingId: (this.state.listings.find(x => x.code && x.code === r.listing_code) || {}).id || this.state.listingId,
+        source: r.source || (r.partner_slug ? 'Partner · ' + r.partner_slug : 'Direct'), finance: lab[r.stage] || r.stage, stage: lab[r.stage] || r.stage, time: String(r.created_at || '').slice(0, 16),
+        consents: Object.fromEntries((r.consents || []).map(c => [ck[c.kind] || c.kind, String(c.created_at || '').slice(11, 16)])),
+        facts: (r.data && r.data.facts) || [{ k: 'Mobile', v: r.mobile }], docs: (r.docs || []).map(x => x.type + (x.deleted_at ? ' (deleted)' : '')) }));
+      this.setState(s => ({ leads: [...mapped, ...s.leads.filter(l => !l.real)], brokerLeadId: mapped[0].id }));
+    });
+    this.svc('api.getProducts').then(p => { if (Array.isArray(p) && p.length) { this._srvProducts = p; this.setState({ products: p }); } });
     if (this.state.step === 'reports' && this.state.bp !== 'Ready') this.startBp();
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.installEvt = e; this.forceUpdate(); });
     if ('serviceWorker' in navigator && this.appMode()) navigator.serviceWorker.register('sw.js').catch(() => {});
   }
   componentDidUpdate(pp, ps) {
+    if (ps.products !== this.state.products && this.state.products !== this._srvProducts) { clearTimeout(this._pt); this._pt = setTimeout(() => this.svc('api.saveProducts', this.state.products), 1200); }
     try { localStorage.setItem('lg_demo_v1', JSON.stringify({ ...this.state, docs: {} })); } catch (e) {}
     if (pp.brandPreset !== this.props.brandPreset && this.props.brandPreset) this.applyPreset(this.props.brandPreset);
     if (pp.partnerType !== this.props.partnerType && this.props.partnerType) this.setPartner(this.props.partnerType);
@@ -972,6 +996,7 @@ class Component extends DCLogic {
   }
   startBp() {
     const L = this.listing();
+    if (L.real) { this.setState({ bp: L.bpUploaded ? 'Ready' : 'Requested' }); return; }
     if (L.bpUploaded) { this.setState({ bp: 'Ready' }); return; }
     this.setState({ bp: 'Ordering…' });
     this.log('reports.orderBuildingPest', 'No vendor report in CRM → ordered from inspector panel, cached for ' + L.street);
@@ -1029,7 +1054,11 @@ class Component extends DCLogic {
       { key: 'title', name: 'Title search', source: 'NSW Land Registry via title search provider', status: 'Ready' },
       { key: 'contract', name: 'Contract of sale', source: 'From agent CRM documents', status: 'Ready' }
     ];
-    const reports = rep.map(r => ({ ...r, ready: r.status === 'Ready', notReady: r.status !== 'Ready', onView: () => this.setState({ reportKey: r.key }) }));
+    const TY = { core: 'property', bp: 'building_pest', strata: 'strata', title: 'title', contract: 'contract' };
+    if (L.real) rep.forEach(r => { const fl = (L.files || []).find(x => x.type === TY[r.key]); r.file = fl;
+      r.status = fl ? 'Ready' : (r.key === 'strata' ? 'N/A' : 'Requested');
+      r.source = fl ? (fl.name || 'PDF') + ' · from ' + sharer.agency : (r.key === 'strata' ? 'Not supplied for this property' : 'Requested from the agent. We’ll text you when it’s ready'); });
+    const reports = rep.map(r => ({ ...r, ready: r.status === 'Ready', notReady: r.status !== 'Ready', onView: () => { if (r.file) window.open(r.file.url, '_blank', 'noopener'); else if (!L.real) this.setState({ reportKey: r.key }); } }));
     const rk = rep.find(r => r.key === s.reportKey);
     const docSumm = { bp: 'Summary: no major defects. Minor: gutter repair, termite barrier due 2027.', strata: 'Admin fund healthy · Levies $1,840/qtr · No special levy planned', title: 'Registered proprietor matches vendor · 1 easement (drainage)', contract: 'Contract of sale · 38 pages · Section 66W available' };
     const rv = rk ? { name: rk.name, source: rk.source, isCore: rk.key === 'core', isDoc: rk.key !== 'core', summary: docSumm[rk.key] || '', meta: rk.key === 'bp' ? 'PDF · 24 pages · inspected 14 Oct 2026' : 'PDF · synced from listing documents' } : { isCore: false, isDoc: false };
@@ -1047,7 +1076,7 @@ class Component extends DCLogic {
     const dv = (k, label, hint, icon) => { const d = s.docs[k]; const has = !!d; const isImg = has && d !== 'sample';
       return { label: has ? (isImg ? '' : label + ' ✓') : label, hint: has ? (isImg ? '' : 'Sample attached') : hint, icon: has ? (isImg ? '' : '✓') : icon, hasImg: isImg, url: isImg ? d : '', empty: !has,
         bd: has ? '#2E7D4F' : '#B9B3A9', bg: has ? '#EEF7F1' : '#FAF9F6',
-        onFile: (e) => { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.gotDoc(k, file.type.startsWith('image') ? url : 'sample'); },
+        onFile: (e) => { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.gotDoc(k, file.type.startsWith('image') ? url : 'sample', file); },
         onSample: () => this.gotDoc(k, 'sample') }; };
     const selfEmp = f.emp === 'Self-employed';
     const idTiles = [dv('licFront', 'Front', 'Tap to take photo', '📷'), dv('licBack', 'Back', 'Tap to take photo', '📷')];
@@ -1171,6 +1200,7 @@ class Component extends DCLogic {
         timeLabel: selfEmp ? 'Time trading' : 'Time with this employer',
         docTitle: selfEmp ? 'Upload last 2 tax returns' : 'Upload your 2 latest payslips', docHint: selfEmp ? 'Notices of assessment are fine. Lenders need 2 years for self-employed.' : 'The latest two only. Lenders check year-to-date income.',
         bankLabel: s.bankDone ? 'Bank connected ✓ · totals filled in' : 'Connect your bank (fastest)', hasHecs: f.hecs === 'Yes',
+        laterLabel: s.laterSent === 'sent' ? 'Link sent by SMS ✓' : s.laterSent === 'saved' ? 'Saved on this phone ✓' : 'Text me a link to finish later',
         consentMissing: !consentOk, consentOp: consentOk ? 1 : 0.4, hasOffer: !!offer, offer: offer || {}, tel: 'tel:' + s.broker.phone.replace(/\s/g, ''),
         notApp: !this.appMode(), mainPad: this.appMode() ? '0' : '32px 24px 48px',
         fw: this.appMode() ? '100%' : '390px', fh: this.appMode() ? '100dvh' : '812px', fb: this.appMode() ? '0' : '10px solid #1B1B1B', fr: this.appMode() ? '0' : '48px', fs: this.appMode() ? 'none' : '0 30px 60px -20px rgba(0,0,0,.35)',
@@ -1191,6 +1221,7 @@ class Component extends DCLogic {
       sendOtp: () => { this.log('sms.sendOtp', '→ ' + f.mobile + ' · 4-digit code'); this.svc('sms.sendOtp', f.mobile); this.go('otp'); },
       verifyOtp: () => {
         this.svc('sms.verifyOtp', 'otp', f.otp);
+        this.svc('api.startLead', { listingCode: L.code || null, listing: L.street + ', ' + L.suburb, source: s.source, mobile: f.mobile, name: [f.first, f.surname].filter(Boolean).join(' '), consents: [{ kind: 'contact', text: 'By continuing you consent to ' + sharer.agency + ' and ' + b.name + ' ' + b.sub + ' contacting you about this property and your finance. Mobile ' + f.mobile + ' verified by SMS code.' }] });
         this.log('sms.verifyOtp', 'verified ✓ · buyer token issued');
         this.setLC('sms'); this.audit('Demo buyer', 'SMS & contact consent', 'Mobile verified ' + f.mobile + ' · opt-out in every message');
         this.log('corelogic.getPropertyReport', L.street + ', ' + L.suburb + ' → branded PDF generated');
@@ -1212,6 +1243,7 @@ class Component extends DCLogic {
       goWork: () => { if (!f.salary && f.income) this.setF('salary', f.income); if (f.joint === 'With partner / co-buyer' && f.partnerMobile) this.log('sms.sendLink', 'Co-applicant link → ' + f.partnerMobile); this.go('pa_work'); },
       goMoney: () => { if (!f.savings && f.deposit) this.setF('savings', f.deposit); this.go('pa_money'); },
       goReview: () => this.go('pa_review'),
+      finishLater: () => { const url = location.origin + location.pathname + '?app=buyer' + (L.code ? '&l=' + L.code : '') + (window.LGS && window.LGS.api && window.LGS.api.partner ? '&p=' + window.LGS.api.partner : ''); this.svc('api.resume', url).then(r => this.setState({ laterSent: r && r.sent ? 'sent' : 'saved' })); this.log('sms.sendLink', 'Finish-later link → ' + f.mobile); },
       connectBank: () => {
         this.log('bank.connect', 'CDR consent → 2 accounts, 1 credit card linked');
         this.svc('bank.connect').then(() => this.setState(st2 => ({ bankDone: true, f: { ...st2.f, savings: st2.f.savings || st2.f.deposit || '185,000', cards: '12,000', loans: '0', otherProp: 'No', hecs: st2.f.hecs || 'No' } })));
@@ -1227,7 +1259,7 @@ class Component extends DCLogic {
         this.setState({ brokerLeadId: 'live' });
         this.setLC('credit'); this.setLC('decl');
         this.audit(name, 'Declaration & credit check consent', 'Accuracy declaration, credit report consent, privacy & credit guide');
-        this.svc('broker.submitFactFind', {});
+        this.svc('broker.submitFactFind', { name, email: f.email, facts, f: { ...f, otp: undefined }, product: s.selProduct, consents: ['a', 'b', 'c'].map(k => ({ kind: { a: 'declaration', b: 'credit_check', c: 'privacy_credit_guide' }[k], text: cText[k] })) });
         this.log('docs.upload', docs.join(', ') + ' → encrypted vault');
         this.log('broker.submitFactFind', 'Customer Information Form pre-filled (pages 1–4) → ' + s.broker.email);
         this.log('crm.writeLead', 'Stage "Pre-approval submitted" → agent ' + s.agent.name + ' notified');
@@ -1387,9 +1419,9 @@ class Component extends DCLogic {
     };
   }
 
-  gotDoc(k, url) {
+  gotDoc(k, url, file) {
     this.setState(s => ({ docs: { ...s.docs, [k]: url } }));
-    this.svc('docs.upload', null, k);
+    this.svc('docs.upload', file || null, k);
     this.log('docs.upload', k + ' → encrypted vault');
     if (k === 'licFront') {
       this.setState({ ocrBusy: true });
