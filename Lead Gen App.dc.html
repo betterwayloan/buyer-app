@@ -834,7 +834,7 @@ a:hover{color:#E8730C}
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;partnerType&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Real estate agent&quot;,&quot;Buyer's agent&quot;,&quot;Accountant&quot;,&quot;Financial planner&quot;,&quot;Conveyancer / solicitor&quot;],&quot;default&quot;:&quot;Real estate agent&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;brandPreset&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;LJ Hooker&quot;,&quot;BetterWayLoan&quot;,&quot;Neutral&quot;],&quot;default&quot;:&quot;LJ Hooker&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDevLog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;partnerType&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Real estate agent&quot;,&quot;Buyer's agent&quot;,&quot;Accountant&quot;,&quot;Financial planner&quot;,&quot;Conveyancer / solicitor&quot;],&quot;default&quot;:&quot;Real estate agent&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;brandPreset&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;BetterWayLoan&quot;,&quot;LJ Hooker&quot;,&quot;Neutral&quot;],&quot;default&quot;:&quot;BetterWayLoan&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDevLog&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
   state = this.load() || this.fresh();
   scrollRef = React.createRef();
@@ -901,7 +901,7 @@ class Component extends DCLogic {
         { t: '20 Oct, 11:18:47 am', lead: 'Priya & Tom Nair', event: 'SMS & contact consent', detail: 'Mobile verified 0433 210 978' }], liveConsents: {}, bid: {}, notify: [], dataMode: 'Sandbox (test data)', intSearch: '', connecting: null, apiKey: '', cgChecked: false, cgAccepted: false,
       view: 'buyer', step: 'landing', photo: 0, brand: { ...(this.presets()[pk] || this.presets()['BetterWayLoan']) }, preset: pk,
       broker: { name: 'Aneis Samaan', firstName: 'Aneis', office: 'Greater Western Sydney', phone: '0404 501 542', email: 'info@betterwayloan.com', acl: '380270' },
-      agent: { name: 'Sarah Mitchell', agency: 'LJ Hooker Double Bay' },
+      agent: { name: 'Sarah Mitchell', agency: 'Example Realty' },
       listings, listingId: 'L1', source: 'Open-home QR', f: this.defaultsF(listings[0].price), finance: null, bp: 'Ordering…', reportKey: null, docs: {}, ocrBusy: false, bankDone: false,
       consent: { a: false, b: false, c: false }, selProduct: 'p1', leads: this.seedLeads(), products: this.seedProducts(), log: [], brokerLeadId: 's2',
       offer: { productId: 'p1', rate: '5.69', note: 'Rate discount approved subject to valuation. I\'ll call to confirm next steps.' },
@@ -946,7 +946,7 @@ class Component extends DCLogic {
   }
   profiles() {
     return {
-      'Real estate agent': { tab: 'Agent dashboard', who: 'Sarah Mitchell', org: 'LJ Hooker Double Bay', kicker: '', reportsTitle: 'Free buyer reports for this home', cta: 'Get my free reports', extra: 'Instant rate check', purpose: 'Owner-occupier',
+      'Real estate agent': { tab: 'Agent dashboard', who: 'Sarah Mitchell', org: 'Example Realty', kicker: '', reportsTitle: 'Free buyer reports for this home', cta: 'Get my free reports', extra: 'Instant rate check', purpose: 'Owner-occupier',
         sources: ['Open-home QR', 'Open-home check-in (CRM)', 'SMS from agent'], propsLabel: 'Listings', propsSub: 'listings sync automatically from', simBtn: 'Simulate open-home check-in', simSource: 'Open-home check-in',
         intHead: 'Connect your CRM (one click)', intNote: 'Pulls listings, photos, open-home times and documents. Open-home check-ins trigger the buyer SMS. Leads are written back.',
         ints: [['Rex', 'Sales CRM'], ['VaultRE', 'Sales CRM'], ['Agentbox', 'Sales CRM'], ['MyDesktop', 'Sales CRM'], ['Box+Dice', 'Sales CRM'], ['Eagle Software', 'Sales + PM'], ['PropertyMe', 'Property mgmt'], ['PropertyTree', 'Property mgmt'], ['Console Cloud', 'Property mgmt']] },
