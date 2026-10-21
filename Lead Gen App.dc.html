@@ -843,7 +843,7 @@ class Component extends DCLogic {
   presets() {
     return {
       'LJ Hooker': { name: 'LJ Hooker', sub: 'Home Loans', ink: '#2B2B2B', accent: '#E8730C', bar1: '#FDB913', bar2: '#F58220', bar3: '#E2231A', tint: '#FFF5EA' },
-      'BetterWayLoan': { name: 'BetterWayLoan', sub: '', ink: '#14324F', accent: '#1E8C6E', bar1: '#7FD1B3', bar2: '#1E8C6E', bar3: '#14324F', tint: '#EAF5F0' },
+      'BetterWayLoan': { name: 'Better Way Loan', sub: '', ink: '#0B1F33', accent: '#0D6E6E', bar1: '#D9B97E', bar2: '#A8834A', bar3: '#0B1F33', tint: '#F7F5F0' },
       'Neutral': { name: 'HomeReady', sub: 'Buyer reports', ink: '#25303B', accent: '#B5532C', bar1: '#E9C46A', bar2: '#B5532C', bar3: '#25303B', tint: '#F6F1EA' }
     };
   }
@@ -892,22 +892,22 @@ class Component extends DCLogic {
       emp: 'Full-time', employer: '', jobTitle: '', jobTime: '', prevEmployer: '', abn: '', salary: '', otherIncome: '', savings: '', cards: '', loans: '', hecs: '', hecsAmt: '', otherProp: '' };
   }
   fresh() {
-    const pk = this.props.brandPreset || 'LJ Hooker';
+    const pk = this.props.brandPreset || 'BetterWayLoan';
     const listings = this.seedListings();
-    return { v: 2, audit: [
+    return { v: 3, audit: [
         { t: '20 Oct, 11:26:40 am', lead: 'Priya & Tom Nair', event: 'Declaration & credit check consent', detail: 'Both applicants · IP logged' },
         { t: '20 Oct, 11:21:05 am', lead: 'Priya & Tom Nair', event: 'Comparison displayed', detail: '5 products · comparison rate warning · not-whole-of-market notice' },
         { t: '20 Oct, 11:20:12 am', lead: 'Priya & Tom Nair', event: 'Credit Guide received', detail: 'v1.2 shown before any rates' },
         { t: '20 Oct, 11:18:47 am', lead: 'Priya & Tom Nair', event: 'SMS & contact consent', detail: 'Mobile verified 0433 210 978' }], liveConsents: {}, bid: {}, notify: [], dataMode: 'Sandbox (test data)', intSearch: '', connecting: null, apiKey: '', cgChecked: false, cgAccepted: false,
-      view: 'buyer', step: 'landing', photo: 0, brand: { ...(this.presets()[pk] || this.presets()['LJ Hooker']) }, preset: pk,
-      broker: { name: 'Eric Greening J.P.', firstName: 'Eric', office: 'Sydney CBD & Eastern Suburbs', phone: '0407 346 269', email: 'egreening@ljhookerhomeloans.com.au', acl: '380270' },
+      view: 'buyer', step: 'landing', photo: 0, brand: { ...(this.presets()[pk] || this.presets()['BetterWayLoan']) }, preset: pk,
+      broker: { name: 'Aneis Samaan', firstName: 'Aneis', office: 'Greater Western Sydney', phone: '0404 501 542', email: 'info@betterwayloan.com', acl: '380270' },
       agent: { name: 'Sarah Mitchell', agency: 'LJ Hooker Double Bay' },
       listings, listingId: 'L1', source: 'Open-home QR', f: this.defaultsF(listings[0].price), finance: null, bp: 'Ordering…', reportKey: null, docs: {}, ocrBusy: false, bankDone: false,
       consent: { a: false, b: false, c: false }, selProduct: 'p1', leads: this.seedLeads(), products: this.seedProducts(), log: [], brokerLeadId: 's2',
       offer: { productId: 'p1', rate: '5.69', note: 'Rate discount approved subject to valuation. I\'ll call to confirm next steps.' },
       crm: ['Rex'], partnerType: 'Real estate agent', share: { mobile: '', address: '' }, shareSent: false, site: '' };
   }
-  load() { try { const s = JSON.parse(localStorage.getItem('lg_demo_v1')); if (s && s.v === 2) { s.docs = {}; s.reportKey = null; return s; } } catch (e) {} return null; }
+  load() { try { const s = JSON.parse(localStorage.getItem('lg_demo_v1')); if (s && s.v === 3) { s.docs = {}; s.reportKey = null; return s; } } catch (e) {} return null; }
   standalone() { try { return window.self === window.top && matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; } }
   appMode() { try { const q = new URLSearchParams(location.search); return q.get('app') === 'buyer' || !!q.get('p') || !!q.get('l') || this.standalone(); } catch (e) { return false; } }
   componentDidMount() {
@@ -920,7 +920,7 @@ class Component extends DCLogic {
         guide: d.price || 'Contact agent', price: n > 50000 ? n : this.state.f.price, openHome: String(d.openHomes || '').split('\n')[0], photos: (d.photos && d.photos.length) ? d.photos : this.state.listings[0].photos,
         bpUploaded: !!has('building_pest'), strata: !!has('strata'), files: d.reports || [],
         core: { est: has('property') ? 'See the full report' : 'Requested from the agent', conf: '—', facts: [{ k: 'Bedrooms', v: String(d.beds || '—') }, { k: 'Bathrooms', v: String(d.baths || '—') }, { k: 'Car spaces', v: String(d.cars || '—') }, { k: 'Type', v: d.type || '—' }], history: [], comps: [] } };
-      this.setState(s => ({ listings: [RL, ...s.listings.filter(x => !x.real)], listingId: RL.id, source: 'Partner QR · ' + d.partner.name, partners: { ...(s.partners || {}), [s.partnerType]: { name: d.partner.name, agency: d.partner.name } }, bp: RL.bpUploaded ? 'Ready' : 'Requested' }));
+      this.setState(s => ({ listings: [RL, ...s.listings.filter(x => !x.real)], listingId: RL.id, source: 'Partner QR · ' + d.partner.name, partners: { ...(s.partners || {}), [s.partnerType]: { name: d.partner.name, agency: d.partner.name } }, brand: (() => { const a = d.partner.brand && d.partner.brand.accent; const n = a && /^#[0-9a-f]{6}$/i.test(a) ? parseInt(a.slice(1), 16) : null; const dark = n !== null && (0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255 < 0.6; return { ...s.brand, name: d.partner.name, sub: '', accent: dark ? a : s.brand.accent }; })(), bp: RL.bpUploaded ? 'Ready' : 'Requested' }));
     });
     this.svc('api.leads').then(rows => {
       if (!Array.isArray(rows) || !rows.length || !rows[0].ref) return;
