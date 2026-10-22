@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyList date="2026-10-23-09:00:00" username="bwl-test" password="">
+  <residential modTime="2026-10-23-09:00:00" status="current">
+    <agentID>BWLTEST</agentID>
+    <uniqueID>BWL-TEST-1</uniqueID>
+    <listingAgent id="1"><name>Sarah Test</name><telephone type="mobile">0400 000 000</telephone></listingAgent>
+    <price display="yes">985000</price>
+    <priceView>Offers over $950,000</priceView>
+    <address display="yes"><streetNumber>12</streetNumber><street>Test Street</street><suburb display="yes">Penrith</suburb><state>NSW</state><postcode>2750</postcode><country>Australia</country></address>
+    <category name="House"/>
+    <headline>Family home close to the river</headline>
+    <description>Four bedrooms, two bathrooms and a double garage on a level block. This is a test listing sent by the Better Way Loan listing feed.</description>
+    <features><bedrooms>4</bedrooms><bathrooms>2</bathrooms><garages>2</garages><carports>0</carports></features>
+    <inspectionTimes><inspection>25-Oct-2026 10:00am to 10:30am</inspection></inspectionTimes>
+    <images><img id="m" modTime="2026-10-23-09:00:00" url="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&amp;fit=crop&amp;w=1600&amp;q=75" format="jpg"/><img id="a" modTime="2026-10-23-09:00:00" url="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=1600&amp;q=75" format="jpg"/><img id="b" modTime="2026-10-23-09:00:00" url="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&amp;fit=crop&amp;w=1600&amp;q=75" format="jpg"/></images>
+    <media><attachment id="1" usage="buildingReport" modTime="2026-10-23-09:00:00" url="https://app.betterwayloan.com/test/12-test-street-building-pest-report.pdf" contentType="application/pdf"/></media>
+  </residential>
+  <residential modTime="2026-10-23-09:00:00" status="current">
+    <agentID>BWLTEST</agentID>
+    <uniqueID>BWL-TEST-2</uniqueID>
+    <price display="no">720000</price>
+    <priceView>Contact agent</priceView>
+    <address display="yes"><subNumber>3</subNumber><streetNumber>5</streetNumber><street>Sample Avenue</street><suburb display="yes">Glenmore Park</suburb><state>NSW</state><postcode>2745</postcode><country>Australia</country></address>
+    <category name="Townhouse"/>
+    <headline>Low-maintenance townhouse</headline>
+    <description>Three bedrooms and a courtyard. Test listing.</description>
+    <features><bedrooms>3</bedrooms><bathrooms>2</bathrooms><garages>1</garages></features>
+    <images><img id="m" modTime="2026-10-23-09:00:00" url="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&amp;fit=crop&amp;w=1600&amp;q=75" format="jpg"/><img id="a" modTime="2026-10-23-09:00:00" url="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&amp;fit=crop&amp;w=1600&amp;q=75" format="jpg"/></images>
+  </residential>
+</propertyList>
